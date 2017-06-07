@@ -3,6 +3,8 @@ package svc
 import scalaz._
 import scalaz.syntax.monad._ /* Brings in `>>` operator */
 import scalaz.Free.Trampoline
+import scalaz.syntax.std.option._  /* Brings in `.some` */
+import scalaz.std.option._  /* Brings in `|@|` for Option */
 
 // --- //
 
@@ -48,4 +50,21 @@ object Zed {
   /** An extra `run` is necessary here to escape the Trampoline. */
   def runTrampoline: (Int, Int) = trampolineCountdown.run(10000).run
 
+  /* --- APPLICATIVE --- */
+
+  /** We don't `map` into the Applicative like in cats. */
+  def dumbSum(nums: List[Int]): Option[Int] = nums match {
+    case Nil => Some(0)
+    case n :: ns => (n.some |@| dumbSum(ns)) { _ + _ }
+  }
+
+  /** Argument order for `<*>` seems backward from Haskell.
+    * Cats doesn't have a `<*>`, they stick to `|@|`.
+    *
+    * WART: Type handholding in the lambda.
+    */
+  def dumbSum2(nums: List[Int]): Option[Int] = nums match {
+    case Nil => Some(0)
+    case n :: ns => (dumbSum2(ns) <*> ({ m: Int => n + m }).some)
+  }
 }

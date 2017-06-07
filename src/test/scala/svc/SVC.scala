@@ -29,10 +29,22 @@ class SVCBench extends Benchmarks with ConsoleReport {
       def run() = Kitties.countdownT.run(10000).value.value
     }}
 
+    run("cats/applic-sum") { new Benchmark {
+      def run() = Kitties.dumbSum(List.range(0, 1000))
+    }}
+
+    run("scalaz/applic-sum") { new Benchmark {
+      def run() = Zed.dumbSum(List.range(0, 1000))
+    }}
+
+    run("scalaz/applic-sum2") { new Benchmark {
+      def run() = Zed.dumbSum2(List.range(0, 1000))
+    }}
+
+    /*
     type EitherStr2[T] = scalaz.EitherT[scalaz.Id.Id, String, T]
     type Statey2[T] = scalaz.StateT[({ type λ[α] = scalaz.EitherT[scalaz.Id.Id, String, α] })#λ, Int, T]
 
-    /*
     run("scalaz/StateT-EitherT") { new Benchmark {
 
       def go: Statey2[Int] = scalaz.State.get.lift[EitherStr2].flatMap({ n: Int =>

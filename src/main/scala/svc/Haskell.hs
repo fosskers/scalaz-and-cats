@@ -25,3 +25,11 @@ countdownT = get >>= (\n -> if n <= 0 then throwError "darn!" else put (n-1) >> 
 -- | Peel off the layers of the stack one at a time, from the outside inward.
 runCountdownT :: Either String ((), Int)
 runCountdownT = runStateT countdownT 10000
+
+--------------
+-- APPLICATIVE
+--------------
+
+dumbSum :: [Int] -> Maybe Int
+dumbSum [] = Just 0
+dumbSum (n:ns) = (+) <$> Just n <*> dumbSum ns

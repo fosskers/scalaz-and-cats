@@ -4,6 +4,7 @@ package svc
 import cats._
 import cats.data._
 import cats.implicits._
+import cats.syntax._
 
 // --- //
 
@@ -77,4 +78,15 @@ object Kitties {
   })
 
   /* --- APPLICATIVE --- */
+
+  /** The dumbest way to sum a list. Notice the `n.some`; we can't use
+    * `Some(n)` here because `Some` doesn't have the |@| operator injected into
+    * it.
+    *
+    * Cats uses `|@|` instead of Haskell's `<*>`.
+    */
+  def dumbSum(nums: List[Int]): Option[Int] = nums match {
+    case Nil => Some(0)
+    case n :: ns => (n.some |@| dumbSum(ns)).map(_ + _)
+  }
 }
