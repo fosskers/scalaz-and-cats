@@ -33,6 +33,10 @@ class SVCBench extends Benchmarks with ConsoleReport {
       def run() = Kitties.dumbSum(List.range(0, 1000))
     }}
 
+    run("cats/applic-sum2") { new Benchmark {
+      def run() = Kitties.dumbSum2(List.range(0, 1000))
+    }}
+
     run("scalaz/applic-sum") { new Benchmark {
       def run() = Zed.dumbSum(List.range(0, 1000))
     }}

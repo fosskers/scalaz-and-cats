@@ -89,4 +89,13 @@ object Kitties {
     case Nil => Some(0)
     case n :: ns => (n.some |@| dumbSum(ns)).map(_ + _)
   }
+
+  /** Oh god, the horror. Scala functions don't curry, so we have to do it ourselves.
+    *
+    * `ap` is the same as Haskell's `ap` (or commonly `<*>`).
+    */
+  def dumbSum2(nums: List[Int]): Option[Int] = nums match {
+    case Nil => Some(0)
+    case n :: ns => { (a: Int) => (b: Int) => a + b }.some ap n.some ap dumbSum2(ns)
+  }
 }

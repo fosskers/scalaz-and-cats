@@ -59,12 +59,16 @@ object Zed {
   }
 
   /** Argument order for `<*>` seems backward from Haskell.
-    * Cats doesn't have a `<*>`, they stick to `|@|`.
+    * Cats doesn't have a `<*>`, but they do have `ap`.
+    * Using `|@|` is favoured, however.
     *
     * WART: Type handholding in the lambda.
+    * WART: Operator precedence is borked, such that you have to use parens in
+    * order to ensure the correct order of operations. Otherwise the code won't
+    * compile.
     */
   def dumbSum2(nums: List[Int]): Option[Int] = nums match {
     case Nil => Some(0)
-    case n :: ns => (dumbSum2(ns) <*> ({ m: Int => n + m }).some)
+    case n :: ns => dumbSum2(ns) <*> (n.some <*> { (a: Int) => (b: Int) => a+b }.some)
   }
 }
