@@ -72,3 +72,39 @@ object Zed {
     case n :: ns => dumbSum2(ns) <*> (n.some <*> { (a: Int) => (b: Int) => a+b }.some)
   }
 }
+
+/* --- WRITING TYPECLASS INSTANCES --- */
+
+/** A simple Rose Tree. */
+case class Tree[T](root: T, children: Seq[Tree[T]])
+
+object Tree {
+
+  /** Trees are mappable. */
+  implicit val treeFunctor: Functor[Tree] = new Functor[Tree] {
+    def map[A, B](fa: Tree[A])(f: A => B): Tree[B] =
+      Tree(f(fa.root), fa.children.map(t => t.map(f)))
+   }
+
+  /** Trees are Applicative Functors. */
+  implicit val treeApplicative: Applicative[Tree] = new Applicative[Tree] {
+    def point[A](a: => A): Tree[A] = Tree(a, Seq.empty)
+
+    def ap[A, B](fa: => Tree[A])(tf: => Tree[A => B]): Tree[B] = {
+      val Tree(f, tfs) = tf
+
+      Tree(f(fa.root), fa.children.map(t => t.map(f)) ++ tfs.map(t => fa <*> t))
+     }
+   }
+
+  /** Trees are also Monads. */
+  implicit val treeMonad: Monad[Tree] = new Monad[Tree] {
+    def point[A](a: => A): Tree[A] = treeApplicative.point(a)
+
+    def bind[A, B](fa: Tree[A])(f: A => Tree[B]): Tree[B] = {
+      val Tree(r2, k2) = f(fa.root)
+
+      Tree(r2, k2 ++ fa.children.map(t => t >>= f))
+    }
+  }
+}

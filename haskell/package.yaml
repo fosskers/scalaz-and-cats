@@ -1,0 +1,17 @@
+name:                haskell
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/fosskers/scalaz-vs-cats
+license:             BSD3
+author:              Colin Woodbury
+maintainer:          colingw@gmail.com
+copyright:           2017 Azavea
+category:            Web
+
+dependencies:
+  - base >= 4.7 && < 5
+  - mtl
+
+library:
+  source-dirs:      src

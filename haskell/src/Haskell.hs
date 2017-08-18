@@ -1,7 +1,7 @@
 module Haskell where
 
 import Control.Monad.Except
-import Control.Monad.State.Lazy
+import Control.Monad.State.Strict
 
 ---
 
@@ -33,3 +33,29 @@ runCountdownT = runStateT countdownT 10000
 dumbSum :: [Int] -> Maybe Int
 dumbSum [] = Just 0
 dumbSum (n:ns) = (+) <$> Just n <*> dumbSum ns
+
+--------------
+-- TYPECLASSES
+--------------
+
+data Tree a = Node a [Tree a]
+
+instance Functor Tree where
+  fmap f (Node a ts) = Node (f a) $ map (fmap f) ts
+
+instance Applicative Tree where
+  pure a = Node a []
+
+  Node f fs <*> k@(Node a bs) = Node (f a) $ map (f <$>) bs ++ map (<*> k) fs
+
+instance Monad Tree where
+  return = pure
+
+  Node a as >>= f = Node b $ bs ++ map (>>= f) as
+    where Node b bs = f a
+
+--------
+-- STUBS
+--------
+
+-- How well does type inference work with `undefined` from Haskell and `???` from Scala when it comes to typeclass instances?

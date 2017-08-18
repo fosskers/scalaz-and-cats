@@ -1,0 +1,8 @@
+scala/RUNNING_PID
+scala/logs/
+scala/project/*-shim.sbt
+scala/project/project/
+scala/project/target/
+scala/target/
+scala/.ensime_cache/*
+haskell/.stack-work/*

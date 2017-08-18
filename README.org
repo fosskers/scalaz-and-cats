@@ -28,3 +28,4 @@ Cats, and ScalaZ examples side-by-side.
   12 of 13: scalaz/applic-sum             89643.08 ns; σ=94492.10365 ns @ 10 trials
   13 of 13: scalaz/applic-sum2            68462.86 ns; σ=72166.19211 ns @ 10 trials
 #+END_EXAMPLE
+** Other Comparisons

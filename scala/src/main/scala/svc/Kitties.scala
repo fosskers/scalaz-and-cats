@@ -1,10 +1,13 @@
 package svc
 
+import scala.annotation.tailrec
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 /* Straight-forward imports */
 import cats._
 import cats.data._
 import cats.implicits._
-import cats.syntax._
 
 // --- //
 
@@ -98,4 +101,61 @@ object Kitties {
     case Nil => Some(0)
     case n :: ns => { (a: Int) => (b: Int) => a + b }.some ap n.some ap dumbSum2(ns)
   }
+}
+
+/* --- WRITING TYPECLASS INSTANCES --- */
+
+/** A simple Rose Tree. Baum is Tree in German, renamed to avoid a conflict
+  * with the Tree defined in Zed.
+  */
+case class Baum[T](root: T, children: Seq[Baum[T]])
+
+object Baum {
+
+  /** Identical to the ScalaZ implementation. */
+  implicit val baumFunctor: Functor[Baum] = new Functor[Baum] {
+    def map[A, B](fa: Baum[A])(f: A => B): Baum[B] =
+      Baum(f(fa.root), fa.children.map(t => t.map(f)))
+  }
+
+  implicit val baumApplicative: Applicative[Baum] = new Applicative[Baum] {
+    /* The argument here is strict, where ScalaZ's is lazy (=> A) */
+    def pure[A](a: A): Baum[A] = Baum(a, Seq.empty)
+
+    /* Opposite argument order from ScalaZ */
+    def ap[A, B](tf: Baum[A => B])(fa: Baum[A]): Baum[B] = {
+      val Baum(f, tfs) = tf
+
+      Baum(f(fa.root), fa.children.map(t => t.map(f)) ++ tfs.map(t => t ap fa))
+    }
+  }
+
+  implicit val baumMonad: Monad[Baum] = new Monad[Baum] {
+    def pure[A](x: A): Baum[A] = baumApplicative.pure(x)
+
+    def flatMap[A, B](fa: Baum[A])(f: A => Baum[B]): Baum[B] = {
+      val Baum(r2, k2) = f(fa.root)
+
+      Baum(r2, k2 ++ fa.children.map(t => t >>= f))
+    }
+
+    /* A unique requirement of cats which prevents stack overflows during
+     * Monadic recursion, which is commonplace.
+     */
+    @tailrec
+    def tailRecM[A, B](a: A)(f: A => Baum[Either[A, B]]): Baum[B] = f(a) match {
+      case Baum(Right(r), kids) => Baum(r, ???)
+      case Baum(Left(l), kids) => tailRecM(l)(f)
+    }
+  }
+}
+
+object James {
+  val zong: Option[Int] = Some(2)
+  def zing: Future[Option[Option[Int]]] = Future.successful(Some(Some(1)))
+
+  val foo: OptionT[Future, Option[Int]] = for{
+    a <- OptionT.fromOption[Future](zong)
+    b <- OptionT(zing)
+  } yield b.map(a + _)
 }
