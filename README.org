@@ -13,19 +13,15 @@ Cats, and ScalaZ examples side-by-side.
 
 ** Benchmarks
 
-#+BEGIN_EXAMPLE
-   1 of 13: cats/one get                     77.86 ns; σ=82.06925 ns @ 10 trials
-   2 of 13: scalaz/one get                   45.76 ns; σ=48.23972 ns @ 10 trials
-   3 of 13: cats/bind                       923.73 ns; σ=973.69708 ns @ 10 trials
-   4 of 13: cats/flatmap                    573.23 ns; σ=604.24187 ns @ 10 trials
-   5 of 13: scalaz/bind                     347.31 ns; σ=366.09191 ns @ 10 trials
-   6 of 13: scalaz/flatmap                  274.85 ns; σ=289.71238 ns @ 10 trials
-   7 of 13: cats/countdown              2382149.52 ns; σ=2511006.07418 ns @ 10 trials
-   8 of 13: scalaz/trampoline-count     5978323.34 ns; σ=6301706.11138 ns @ 10 trials
-   9 of 13: cats/StateT[EitherT]        3561077.88 ns; σ=3753705.67255 ns @ 10 trials
-  10 of 13: cats/applic-sum               71229.16 ns; σ=75082.12473 ns @ 10 trials
-  11 of 13: cats/applic-sum2              69458.66 ns; σ=73215.85108 ns @ 10 trials
-  12 of 13: scalaz/applic-sum             89643.08 ns; σ=94492.10365 ns @ 10 trials
-  13 of 13: scalaz/applic-sum2            68462.86 ns; σ=72166.19211 ns @ 10 trials
-#+END_EXAMPLE
+/All times are in nanoseconds./
+
+| Benchmark                            | Cats      | ScalaZ    |
+|--------------------------------------+-----------+-----------|
+| One ~State.get~                      | 78        | 46        |
+| One ~(>>=)~                          | 924       | 347       |
+| One ~flatMap~                        | 573       | 275       |
+| Countdown w/ ~State~                 | 2,382,149 | 5,978,323 |
+| Applicative Sum w/ Cartesian Builder | 71,229    | 89,643    |
+| Applicative Sum w/ ~<*>~ / ~ap~      | 69,458    | 68,462    |
+
 ** Other Comparisons
