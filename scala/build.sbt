@@ -4,7 +4,7 @@ version := "1.0"
 
 /* Settings common to each sub project */
 val common = Seq(
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.12.3",
 
   scalacOptions ++= Seq(
     "-language:higherKinds",
