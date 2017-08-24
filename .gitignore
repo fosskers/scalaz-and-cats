@@ -5,4 +5,5 @@ scala/project/project/
 scala/project/target/
 scala/target/
 scala/.ensime_cache/*
+scala/bench/target/*
 haskell/.stack-work/*
