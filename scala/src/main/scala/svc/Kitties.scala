@@ -107,25 +107,25 @@ object Kitties {
 /** A simple Rose Tree. Baum is Tree in German, renamed to avoid a conflict
   * with the Tree defined in Zed.
   */
-case class Baum[T](root: T, children: Seq[Baum[T]])
+case class Baum[T](root: T, kinder: List[Baum[T]])
 
 object Baum {
 
   /** Identical to the ScalaZ implementation. */
   implicit val baumFunctor: Functor[Baum] = new Functor[Baum] {
     def map[A, B](fa: Baum[A])(f: A => B): Baum[B] =
-      Baum(f(fa.root), fa.children.map(t => t.map(f)))
+      Baum(f(fa.root), fa.kinder.map(t => t.map(f)))
   }
 
   implicit val baumApplicative: Applicative[Baum] = new Applicative[Baum] {
     /* The argument here is strict, where ScalaZ's is lazy (=> A) */
-    def pure[A](a: A): Baum[A] = Baum(a, Seq.empty)
+    def pure[A](a: A): Baum[A] = Baum(a, List.empty)
 
     /* Opposite argument order from ScalaZ */
     def ap[A, B](tf: Baum[A => B])(fa: Baum[A]): Baum[B] = {
       val Baum(f, tfs) = tf
 
-      Baum(f(fa.root), fa.children.map(t => t.map(f)) ++ tfs.map(t => t ap fa))
+      Baum(f(fa.root), fa.kinder.map(t => t.map(f)) ++ tfs.map(t => t ap fa))
     }
   }
 
@@ -135,26 +135,30 @@ object Baum {
     def flatMap[A, B](fa: Baum[A])(f: A => Baum[B]): Baum[B] = {
       val Baum(r2, k2) = f(fa.root)
 
-      Baum(r2, k2 ++ fa.children.map(t => t >>= f))
+      Baum(r2, k2 ++ fa.kinder.map(t => t >>= f))
     }
 
     /* A unique requirement of cats which prevents stack overflows during
      * Monadic recursion, which is commonplace.
+     *
+     * Apparently this needs to be called manually, when you know you'll
+     * be doing deep recursion. The `A => Baum[Either[A, B]]` is to be
+     * invented and called by the user.
+     *
+     * Writing this method is non-trivial for `Baum`.
      */
+    def tailRecM[A, B](a: A)(f: A => Baum[Either[A, B]]): Baum[B] = ???
+      /*
     @tailrec
-    def tailRecM[A, B](a: A)(f: A => Baum[Either[A, B]]): Baum[B] = f(a) match {
-      case Baum(Right(r), kids) => Baum(r, ???)
-      case Baum(Left(l), kids) => tailRecM(l)(f)
+    def tailRecM[A, B](a: A)(f: A => Baum[Either[A, B]]): Baum[B] = {
+      def bugger(tree: Baum[Either[A, B]]): Baum[B] = tree match {
+        case Baum(Right(r), kids) => Baum(r, kids.map(bugger))
+        case Baum(Left(l), kids) => tailRecM(l)(f)  // How the heck do we deal with the kids
+                                                    // while maintaining stack safety?
+      }
+
+      bugger(f(a))
     }
+       */
   }
-}
-
-object James {
-  val zong: Option[Int] = Some(2)
-  def zing: Future[Option[Option[Int]]] = Future.successful(Some(Some(1)))
-
-  val foo: OptionT[Future, Option[Int]] = for{
-    a <- OptionT.fromOption[Future](zong)
-    b <- OptionT(zing)
-  } yield b.map(a + _)
 }
