@@ -1,6 +1,7 @@
 package svc
 
 import scalaz._
+import scalaz.effect._  /* Requires a separate dep, scalaz-effect */
 import scalaz.syntax.monad._ /* Brings in `>>` operator */
 import scalaz.Free.Trampoline
 import scalaz.syntax.std.option._  /* Brings in `.some` */
@@ -70,6 +71,44 @@ object Zed {
   def dumbSum2(nums: List[Int]): Option[Int] = nums match {
     case Nil => Some(0)
     case n :: ns => dumbSum2(ns) <*> (n.some <*> { (a: Int) => (b: Int) => a+b }.some)
+  }
+
+  /* --- SIDE EFFECTS --- */
+
+  /** Same usage as Cats, except that to run the IO we use the Haskell-inspired
+    * method `.unsafePerformIO`
+    */
+  def greet(name: String): IO[Unit] = IO { println(s"Hi, ${name}!") }
+
+  /** This doesn't appear to blow the stack, even without manual trampolining.
+    * Unlike Cats, there is a bit of a slowdown if you use `(>>=)` instead of
+    * `flatMap`, but luckily performance is linear with input size, like Cats.
+    */
+  def recurseIO(n: Int): IO[Int] = n match {
+    case 0 => IO(0)
+    case n => IO(n - 1).flatMap(recurseIO)
+  }
+
+  /** The `IO` type is aware of exceptions and can help you handle them. */
+  def ioException: IO[Unit] =
+    IO(println("Step 1")) >> IO { throw new Exception } >> IO(println("Step 2"))
+
+  /** Various ways of handling Exceptions through IO. Since Exceptions are side-effects
+    * and side-effects should only occur in IO, this is a good way to communicate
+    * that exceptions are possible in an application.
+    *
+    * ScalaZ also has the `bracket` pattern from Haskell, which Cats did not emulate.
+    */
+  def catchingExceptions: Unit = {
+    /* Prints "Step 1" then explodes */
+    ioException.unsafePerformIO
+
+    /* Prints "Step 1", then "crap", then explodes */
+    ioException.onException(IO(println("crap"))).unsafePerformIO
+    ioException.ensuring(IO(println("crap"))).unsafePerformIO
+
+    /* Prints "Step 1", then "crap", then returns safely */
+    ioException.except(_ => IO(println("crap"))).unsafePerformIO
   }
 }
 

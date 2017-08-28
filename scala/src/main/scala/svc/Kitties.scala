@@ -1,12 +1,9 @@
 package svc
 
-import scala.annotation.tailrec
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 /* Straight-forward imports */
 import cats._
 import cats.data._
+import cats.effect._  /* Requires a separate dep, cats-effect */
 import cats.implicits._
 
 // --- //
@@ -99,6 +96,44 @@ object Kitties {
   def dumbSum2(nums: List[Int]): Option[Int] = nums match {
     case Nil => Some(0)
     case n :: ns => { (a: Int) => (b: Int) => a + b }.some ap n.some ap dumbSum2(ns)
+  }
+
+  /* --- SIDE EFFECTS --- */
+
+  /** This is just a declaration of intent - calling `greet` won't
+    * actually do anything. Only running `.unsafeRunSync` on some composition
+    * of IO actions will actually force their execution.
+    *
+    * This is similar to Haskell's IO.
+    */
+  def greet(name: String): IO[Unit] = IO { println(s"Hi, ${name}!") }
+
+  /** We are able to recurse arbitrarily deep, and performance is linear
+    * with input size. With Cats, there is essentially no difference
+    * between recursing with `flatMap` and with `(>>=)`.
+    */
+  def recurseIO(n: Int): IO[Int] = n match {
+    case 0 => IO(0)
+    case n => IO(n - 1).flatMap(recurseIO)
+  }
+
+  /** The `IO` type is aware of exceptions and can help you handle them. */
+  def ioException: IO[Unit] =
+    IO(println("Step 1")) >> IO { throw new Exception } >> IO(println("Step 2"))
+
+  /** Unlike ScalaZ, Cats avoids some Haskell patterns here and only offers
+    * `.attempt`, which forces any Exception into pure-space to be handled
+    * explicitely after the IO has ran.
+    */
+  def catchingExceptions: Unit = {
+    /* Prints "Step 1" then throws */
+    ioException.unsafeRunSync
+
+    /* Prints "Step 1" and then matches on the Left */
+    ioException.attempt.unsafeRunSync match {
+      case Left(_) => println("crap")
+      case Right(_) => println("Success!")
+    }
   }
 }
 
