@@ -1,5 +1,8 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Haskell where
 
+import Control.Exception
 import Control.Monad.Except
 import Control.Monad.State.Strict
 
@@ -33,6 +36,24 @@ runCountdownT = runStateT countdownT 10000
 dumbSum :: [Int] -> Maybe Int
 dumbSum [] = Just 0
 dumbSum (n:ns) = (+) <$> Just n <*> dumbSum ns
+
+---------------
+-- SIDE EFFECTS
+---------------
+
+greet :: String -> IO ()
+greet msg = putStrLn $ "Hi, " ++ msg ++ "!"
+
+recurseIO :: Int -> IO Int
+recurseIO 0 = pure 0
+recurseIO n = pure (n - 1) >>= recurseIO
+
+-- | Is is not wise to manually throw exceptions in Haskell.
+ioException :: IO ()
+ioException = putStrLn "Step 1" >> error "oh no" >> putStrLn "Step 2"
+
+catchingExceptions :: IO ()
+catchingExceptions = catch ioException (\(_ :: ErrorCall) -> putStrLn "crap")
 
 --------------
 -- TYPECLASSES
