@@ -82,15 +82,14 @@ object Kitties {
 
   /* --- APPLICATIVE --- */
 
-  /** The dumbest way to sum a list. Notice the `n.some`; we can't use
-    * `Some(n)` here because `Some` doesn't have the |@| operator injected into
-    * it.
+  /** The dumbest way to sum a list.
     *
-    * Cats uses `|@|` instead of Haskell's `<*>`.
+    * Before 1.0, Cats used to use `|@|` like ScalaZ instead of Haskell's `<*>`.
+    * Now they use "tuple syntax" as seen here.
     */
   def dumbSum(nums: List[Int]): Option[Int] = nums match {
     case Nil => Some(0)
-    case n :: ns => (n.some |@| dumbSum(ns)).map(_ + _)
+    case n :: ns => (Some(n), dumbSum(ns)).mapN(_ + _)
   }
 
   /** Oh god, the horror. Scala functions don't curry, so we have to do it ourselves.
