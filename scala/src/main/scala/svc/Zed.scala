@@ -1,21 +1,41 @@
 package svc
 
 import scalaz._
+import Scalaz._  /* This is easiest. Fighting with the "a la carte" import style is much harder */
 import scalaz.effect._  /* Requires a separate dep, scalaz-effect */
-import scalaz.syntax.monad._ /* Brings in `>>` operator */
 import scalaz.Free.Trampoline
-import scalaz.syntax.std.option._  /* Brings in `.some` */
-import scalaz.std.option._  /* Brings in `|@|` for Option */
 
 // --- //
 
 object Zed {
 
+  /* --- SHOW --- */
+
+  /** The `Show` typeclass gives us a static guarantee that it makes sense
+    * to convert a type to a String. This is not always true for any given type,
+    * but the `toString` method that all types get from `Any` lets this happen.
+    * For instance, should we be able to `toString` a `Future`? You can:
+
+    * {{{
+    * scala> Future(println("hi")).toString
+    * res3: String = Future(<not completed>)hi
+    * }}}
+    *
+    * `Show` binds "printability" to a typeclass, making the conversion call
+    * (via `shows`) a static one instead of a runtime reflective one as with `toString`.
+    *
+    * All the standard types have `Show` instances defined for them already.
+    */
+  def showOpt: String = some(5).shows
+
+  def showAll[A: Show](l: List[A]): String = l.shows
+
   /* --- STATE --- */
 
   /** No extra `value` call necessary like in cats.
     *
-    * Note: (TODO: What is State an alias for?)
+    * Note: `State` is actually an alias for:
+    *   type State[S, A] = IndexedStateT[scalaz.Id.Id, S, S, A]
     */
   def oneGet: (Int, Int) = State.get.run(1)
 

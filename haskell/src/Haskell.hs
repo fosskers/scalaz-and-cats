@@ -8,6 +8,16 @@ import Control.Monad.State.Strict
 
 ---
 
+-------
+-- SHOW
+-------
+
+showOpt :: String
+showOpt = show $ Just 5
+
+showAll :: Show a => [a] -> String
+showAll = show
+
 --------
 -- STATE
 --------

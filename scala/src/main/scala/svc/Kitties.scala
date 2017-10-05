@@ -10,6 +10,13 @@ import cats.implicits._
 
 object Kitties {
 
+  /* --- SHOW --- */
+
+  /** Cats exposes `show` instead of `shows` like ScalaZ. */
+  def showOpt: String = 5.some.show
+
+  def showAll[A: Show](l: List[A]): String = l.show
+
   /* --- STATE --- */
 
   /** Set the initial `State` to 1, and immediately `get` it.

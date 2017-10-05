@@ -1,13 +1,23 @@
 package svc
 
 import java.util.concurrent.TimeUnit
+
+import cats.implicits._
 import org.openjdk.jmh.annotations._
+import scalaz.Scalaz._
 
 // --- //
 
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 class Bench {
+  /* Speed to render to String */
+  @Benchmark
+  def showCats: String = Kitties.showAll(List.range(1, 1000))
+
+  @Benchmark
+  def showScalaz: String = Zed.showAll(List.range(1, 1000))
+
   /* A single call to `get`, which fetches the current "stateful" value */
   @Benchmark
   def oneGetCats: (Int, Int) = Kitties.oneGet
