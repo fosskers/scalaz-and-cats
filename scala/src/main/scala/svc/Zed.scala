@@ -110,6 +110,11 @@ object Zed {
     /* Prints "Step 1", then "crap", then returns safely */
     ioException.except(_ => IO(println("crap"))).unsafePerformIO
   }
+
+  /* --- ASYNC IO --- */
+
+  // This is being overhauled in ScalaZ 8, so I'm waiting for that to be released
+  // before I review it.
 }
 
 /* --- WRITING TYPECLASS INSTANCES --- */

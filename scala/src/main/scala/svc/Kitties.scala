@@ -131,9 +131,30 @@ object Kitties {
 
     /* Prints "Step 1" and then matches on the Left */
     ioException.attempt.unsafeRunSync match {
-      case Left(_) => println("crap")
+      case Left(_)  => println("crap")
       case Right(_) => println("Success!")
     }
+  }
+
+  /* --- ASYNC IO --- */
+
+  /* There are functions here, but I couldn't get any of them to demonstrate
+   * concurrent behaviour.
+   */
+
+  def sleepy(msg: String, n: Int): IO[Unit] = {
+    if (n <= 0) IO(Unit) else IO(println(s"THREAD: ${msg} ${n}")) >> sleepy(msg, n-1)
+  }
+
+  def asyncIO: Unit = {
+    (sleepy("hi", 50) >> sleepy("ho", 50)).unsafeRunAsync({ _ => Unit })
+  }
+
+  def aysink: Unit = {
+    val act: IO[Unit] =
+      IO.async[Unit](f => f(Right(println("hi")))) >> IO.async[Unit](f => f(Right(println("ho")))) >> IO.async(f => f(Right(println("hm"))))
+
+    act.unsafeRunAsync({ _ => Unit })
   }
 }
 
