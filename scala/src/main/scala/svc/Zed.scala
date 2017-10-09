@@ -21,8 +21,34 @@ object Zed {
     * res3: String = Future(<not completed>)hi
     * }}}
     *
+    * How about a function?
+    *
+    * {{{
+    * scala> val f: Int => Int = { n => n + 1 }
+    * f: Int => Int = $$Lambda$1035/114275379@765e9352
+    *
+    * scala> f.toString
+    * res0: String = $$Lambda$1035/114275379@765e9352
+    * }}}
+    *
+    * Notice that the following also works:
+    *
+    * {{{
+    * scala> val stuff: List[Any] = List(1, true, "Hi")
+    * stuff: List[Any] = List(1, true, Hi)
+    *
+    * scala> stuff.map(_.toString)
+    * res1: List[String] = List(1, true, Hi)
+    * }}}
+    *
+    * How was it able to find the correct `.toString` for each element, even though
+    * they've all been cast to `Any`? The answer is a dynamic method lookup at runtime
+    * (i.e. runtime polymorphism), which would incur some overhead and is generally
+    * antithetical to type-safety.
+    *
     * `Show` binds "printability" to a typeclass, making the conversion call
     * (via `shows`) a static one instead of a runtime reflective one as with `toString`.
+    * Only types that are strictly _data_ will ever have a `Show` instance.
     *
     * All the standard types have `Show` instances defined for them already.
     */
