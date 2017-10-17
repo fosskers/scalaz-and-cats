@@ -4,6 +4,8 @@ import scalaz._
 import Scalaz._  /* This is easiest. Fighting with the "a la carte" import style is much harder */
 import scalaz.effect._  /* Requires a separate dep, scalaz-effect */
 import scalaz.Free.Trampoline
+import shapeless.newtype
+import shapeless.newtype._
 
 // --- //
 
@@ -161,6 +163,54 @@ object Zed {
 
   // This is being overhauled in ScalaZ 8, so I'm waiting for that to be released
   // before I review it.
+
+  /* --- TAGGED TYPES --- */
+
+  /** This is similar to Haskell's `newtype` mechanism. It allows one to assign
+    * multiple typeclass instances to a single type without incurring JVM boxing.
+    */
+  sealed trait Unsigned
+  val Unsigned = Tag.of[Unsigned]
+  type UInt = Int @@ Unsigned
+
+  /* Value Classes */
+  class Word(val unwrap: Int) extends AnyVal
+
+  type Tile[A] = Array[A]
+
+  def tileSumFoldUInt(ns: Tile[UInt]): UInt = Unsigned(ns.foldLeft(0)( (acc, n) => Unsigned.unwrap(n) + acc ))
+
+  def tileSumFoldInt(ns: Tile[Int]): Int = ns.foldLeft(0)( (acc, n) => acc + n )
+
+  def tileSumFoldWord(ns: Tile[Word]): Word = new Word(ns.foldLeft(0)( (acc, n) => acc + n.unwrap ))
+
+  def tileSumWhileUInt(ns: Tile[UInt]): UInt = {
+    var i: Int = 0
+    var sum: Int = 0
+
+    while (i < ns.length) { sum += Unsigned.unwrap(ns(i)); i += 1 }
+
+    Unsigned(sum)
+  }
+
+  def tileSumWhileInt(ns: Tile[Int]): Int = {
+    var i: Int = 0
+    var sum: Int = 0
+
+    while (i < ns.length) { sum += ns(i); i += 1 }
+
+    sum
+  }
+
+  def tileSumWhileWord(ns: Tile[Word]): Word = {
+    var i: Int = 0
+    var sum: Int = 0
+
+    while (i < ns.length) { sum += ns(i).unwrap; i += 1 }
+
+    new Word(sum)
+  }
+
 }
 
 /* --- WRITING TYPECLASS INSTANCES --- */

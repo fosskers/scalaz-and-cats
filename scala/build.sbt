@@ -15,8 +15,9 @@ val common = Seq(
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-core"     % "1.0.0-MF",
     "org.typelevel" %% "cats-effect"   % "0.4",
-    "org.scalaz"    %% "scalaz-core"   % "7.3.0-M16",
-    "org.scalaz"    %% "scalaz-effect" % "7.3.0-M16"
+    "org.scalaz"    %% "scalaz-core"   % "7.2.15",
+    "org.scalaz"    %% "scalaz-effect" % "7.2.15",
+    "com.chuusai"   %% "shapeless"     % "2.3.2"
   )
 )
 
@@ -25,6 +26,6 @@ lazy val lib = project.in(file(".")).settings(common)
 
 /* Benchmarking suite.
  * Benchmarks can be executed by first switching to the `bench` project and then by running:
- *     jmh:run -t 1 -f 1 -wi 10 -i 10 .*Bench.*
+ *     jmh:run -t 1 -f 1 -wi 3 -i 3 .*Bench.*
  */
 lazy val bench = project.in(file("bench")).settings(common).dependsOn(lib).enablePlugins(JmhPlugin)
