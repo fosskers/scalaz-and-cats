@@ -17,6 +17,18 @@ object Kitties {
 
   def showAll[A: Show](l: List[A]): String = l.show
 
+  /* --- EQUAL --- */
+
+  /* Same "triple equals" as ScalaZ. Cats matched Haskell in calling
+   * their typeclass `Eq`.
+
+   * WART: Array equality doesn't work out of the box. This doesn't compile:
+   *     Array(1,2,3) === Array(1,2,3)
+   */
+  def equalOpt: Boolean = 5.some === 6.some  // false
+
+  def equalAll[A: Eq](l0: List[A], l1: List[A]): Boolean = l0 === l1
+
   /* --- STATE --- */
 
   /** Set the initial `State` to 1, and immediately `get` it.

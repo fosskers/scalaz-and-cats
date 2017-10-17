@@ -13,10 +13,35 @@ import scalaz.Scalaz._
 class Bench {
   /* Speed to render to String */
   @Benchmark
+  def showVanilla: String = List.range(1, 1000).toString
+
+  @Benchmark
   def showCats: String = Kitties.showAll(List.range(1, 1000))
 
   @Benchmark
   def showScalaz: String = Zed.showAll(List.range(1, 1000))
+
+  /* Speed to test equality */
+  @Benchmark
+  def equalVanilla: Boolean = {
+    val list = List.range(1, 1000)
+
+    list == list
+  }
+
+  @Benchmark
+  def equalCats: Boolean = {
+    val list = List.range(1, 1000)
+
+    Kitties.equalAll(list, list)
+  }
+
+  @Benchmark
+  def equalScalaz: Boolean = {
+    val list = List.range(1, 1000)
+
+    Zed.equalAll(list, list)
+  }
 
   /* A single call to `get`, which fetches the current "stateful" value */
   @Benchmark

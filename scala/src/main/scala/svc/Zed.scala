@@ -4,8 +4,6 @@ import scalaz._
 import Scalaz._  /* This is easiest. Fighting with the "a la carte" import style is much harder */
 import scalaz.effect._  /* Requires a separate dep, scalaz-effect */
 import scalaz.Free.Trampoline
-import shapeless.newtype
-import shapeless.newtype._
 
 // --- //
 
@@ -57,6 +55,27 @@ object Zed {
   def showOpt: String = some(5).shows
 
   def showAll[A: Show](l: List[A]): String = l.shows
+
+  /* --- EQUAL --- */
+
+  /** Scala has "universal equality". We can compare any two objects as equal, even
+    * if it doesn't make sense to. Even if that type has no notion of equality (like `Function`).
+    *
+    * In a similar vein to `Show`, the `Equal` typeclass brings type safety back
+    * to equality testing. Its main operator `(===)` (or "triple equals" like in
+    * Javascript) guarantees that the type on each side of the operator is the same.
+    *
+    * `Equal` is also useful as it paves the way for the `Order` typeclass,
+    * i.e. anything that can be compared (for sorting, say, or binary searches).
+    *
+    * ScalaZ opted to call their typeclass `Equal` instead of `Eq` like in Haskell.
+    *
+    * WART: Array equality doesn't work out of the box. This doesn't compile:
+    *     Array(1,2,3) === Array(1,2,3)
+    */
+  def equalOpt: Boolean = some(5) === some(6)  // false
+
+  def equalAll[A: Equal](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
   /* --- STATE --- */
 

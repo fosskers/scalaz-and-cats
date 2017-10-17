@@ -18,6 +18,16 @@ showOpt = show $ Just 5
 showAll :: Show a => [a] -> String
 showAll = show
 
+-----
+-- EQ
+-----
+
+equalOpt :: Bool
+equalOpt = Just 5 == Just 6
+
+equalAll :: Eq a => [a] -> [a] -> Bool
+equalAll l0 l1 = l0 == l1
+
 --------
 -- STATE
 --------
