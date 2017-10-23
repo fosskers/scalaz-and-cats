@@ -77,6 +77,12 @@ object Zed {
 
   def equalAll[A: Equal](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
+  /* --- SEMIGROUP / MONOID --- */
+
+  def combineAllL[A: Monoid](l: List[A]): A = l.suml
+
+  def combineAllR[A: Monoid](l: List[A]): A = l.sumr
+
   /* --- STATE --- */
 
   /** No extra `value` call necessary like in cats.

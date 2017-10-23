@@ -27,6 +27,6 @@ lazy val lib = project.in(file(".")).settings(common)
 
 /* Benchmarking suite.
  * Benchmarks can be executed by first switching to the `bench` project and then by running:
- *     jmh:run -t 1 -f 1 -wi 3 -i 3 .*Bench.*
+ *     jmh:run -t 1 -f 1 -wi 5 -i 5 .*Bench.*
  */
 lazy val bench = project.in(file("bench")).settings(common).dependsOn(lib).enablePlugins(JmhPlugin)

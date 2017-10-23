@@ -29,6 +29,14 @@ object Kitties {
 
   def equalAll[A: Eq](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
+  /* --- SEMIGROUP / MONOID --- */
+
+  /* Usually `combineAll` is called `fold`, but that doesn't work here because of
+   * an existing method on List of the same name. Using `fold` would work if the signature were:
+   *   def combineAll[A: Monoid, F[_]: Foldable](l: F[A]): A
+   */
+  def combineAll[A: Monoid](l: List[A]): A = l.combineAll
+
   /* --- STATE --- */
 
   /** Set the initial `State` to 1, and immediately `get` it.

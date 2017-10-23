@@ -5,6 +5,7 @@ module Haskell where
 import Control.Exception
 import Control.Monad.Except
 import Control.Monad.State.Strict
+import Data.Foldable (fold)
 
 ---
 
@@ -27,6 +28,13 @@ equalOpt = Just 5 == Just 6
 
 equalAll :: Eq a => [a] -> [a] -> Bool
 equalAll l0 l1 = l0 == l1
+
+---------
+-- MONOID
+---------
+
+combineAll :: Monoid a => [a] -> a
+combineAll = fold
 
 --------
 -- STATE
