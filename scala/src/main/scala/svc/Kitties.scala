@@ -13,9 +13,9 @@ object Kitties {
   /* --- SHOW --- */
 
   /** Cats exposes `show` instead of `shows` like ScalaZ. */
-  def showOpt: String = 5.some.show
+  def show[A: Show](a: A): String = a.show
 
-  def showAll[A: Show](l: List[A]): String = l.show
+  def showOpt: String = 5.some.show
 
   /* --- EQUAL --- */
 

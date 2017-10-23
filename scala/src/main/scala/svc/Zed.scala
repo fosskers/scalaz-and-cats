@@ -52,9 +52,9 @@ object Zed {
     *
     * All the standard types have `Show` instances defined for them already.
     */
-  def showOpt: String = some(5).shows
+  def show[A: Show](a: A): String = a.shows
 
-  def showAll[A: Show](l: List[A]): String = l.shows
+  def showOpt: String = some(5).shows
 
   /* --- EQUAL --- */
 

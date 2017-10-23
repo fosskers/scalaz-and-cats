@@ -15,8 +15,10 @@ val common = Seq(
   libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-core"     % "1.0.0-MF",
     "org.typelevel" %% "cats-effect"   % "0.4",
-    "org.scalaz"    %% "scalaz-core"   % "7.2.16",
-    "org.scalaz"    %% "scalaz-effect" % "7.2.16"
+    // "org.scalaz"    %% "scalaz-core"   % "7.2.16",
+    // "org.scalaz"    %% "scalaz-effect" % "7.2.16"
+    "org.scalaz"    %% "scalaz-core"   % "7.3.0-M17",
+    "org.scalaz"    %% "scalaz-effect" % "7.3.0-M17"
   )
 )
 
