@@ -1,27 +1,42 @@
-* ScalaZ and Cats Comparison
-
-This project aims to give a fair comparison of basic usage and benchmark
-timings for the Scala FP libraries ScalaZ and Cats. For contrast, identical
-Haskell examples are also provided.
-
-The hope is that this can also serve as an educational tool / reference for
-other projects that are committed to Scala and considering adopting one
-library or the other.
-
-You are encouraged to open three browser windows and compare the Haskell,
-Cats, and ScalaZ examples side-by-side.
+#+TITLE: ScalaZ and Cats Comparison
+#+AUTHOR: Colin
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/colin/code/org-theme.css"/>
 
 ** Benchmarks
 
 /All times are in nanoseconds./
 
-| Benchmark                            | Cats      | ScalaZ    |
-|--------------------------------------+-----------+-----------|
-| One ~State.get~                      | 78        | 46        |
-| One ~(>>=)~                          | 924       | 347       |
-| One ~flatMap~                        | 573       | 275       |
-| Countdown w/ ~State~                 | 2,382,149 | 5,978,323 |
-| Applicative Sum w/ Cartesian Builder | 71,229    | 89,643    |
-| Applicative Sum w/ ~<*>~ / ~ap~      | 69,458    | 68,462    |
+| Benchmark                                   | ScalaZ 7.3.0-M17 | Cats 1.0.0-MF | Vanilla Scala | Haskell 8.0.2 |
+|---------------------------------------------+------------------+---------------+---------------+---------------|
+| ~Eq~ - same list                            | 78,183           | 4.4           | 2.4           | 3,974         |
+| ~Eq~ - different list                       | 78,884           | 4,039         | 5,150         |               |
+| ~Show~ - ~[Int]~                            | 1,000,757        | 43,633        | 41,079        | 46,540        |
+| ~Show~ - ~String~                           | 216.6            | 3.2           | 2.8           | 199.4         |
+| ~Foldable.fold~ on ~[Int]~       | 3,355            | 5,026         | 7,939         | 3,330         |
+| ~Foldable.fold~ on ~[Maybe Int]~ | 10,740           | 12,506        |               | 15,440        |
+| ~State~ - oneGet                            | 17.9             | 33.3          |               | 4.1           |
+| ~State~ - bind                              | 90               | 139.1         |               | 10.43         |
+| ~State~ - ~flatMap~                         | 63.9             | 133.3         |               |               |
+| ~State~ - countdown                         | 4,259,320        | 2,071,480     |               | 6,069         |
+| ~State~ - countdownT                        |                  | 4,572,499     |               | 24,070        |
+| ~Applicative~ - sum ~(<*>)~                 | 31,709           | 32,132        |               | 22,140        |
+| ~Applicative~ - sum (cartesian)             | 50,431           | 33,638        |               |               |
+| ~IO~ - recurse 1000                         | 117,569          | 48,558        |               | 907.7         |
+| ~IO~ - recurse 10000                        | 1,183,352        | 503,889       |               | 9,095         |
+| ~IO~ - recurse 100000                       | 11,671,581       | 5,167,355     |               | 89,860        |
 
-** Other Comparisons
+** The API
+
+*** Accessibility
+
+Cats has much more documentation and usage examples.
+
+*** Monads and Monadic Recursion
+
+Quote from cats:
+
+#+BEGIN_QUOTE
+Because monadic recursion is so common in functional programming but is not stack
+safe on the JVM, Cats has chosen to require [~tailRecM~] of all monad
+implementations as opposed to just a subset.
+#+END_QUOTE
