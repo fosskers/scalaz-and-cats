@@ -2,9 +2,55 @@
 #+AUTHOR: Colin
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/colin/code/org-theme.css"/>
 
+This is a comparison of ScalaZ and Cats by someone who isn't predisposed
+to either library. It seeks to answer the following question:
+
+#+BEGIN_QUOTE
+Should I use ScalaZ or Cats?
+#+END_QUOTE
+
+The answer is, of course, "it depends". What's your use-case?
+
+*I'm writing a performance-sensitive application.*
+
+Lean toward Cats, it tends to be faster in aggregate. Are you using a
+database? Consider [[https://github.com/tpolecat/doobie][Doobie]], which uses Cats.
+
+*I want to improve quality-of-life for my Scala devs.*
+
+Any dedicated application of FP concepts will help you organize and simplify
+your code. However, Cats has a wider ecosystem of go-to FP libraries
+that can bring drastic and immediate wins to your projects.
+
+*I want to port a well-known, general-purpose Haskell library to Scala.*
+
+You'd be a champ to write a backend for both ScalaZ and Cats, but
+know that Cats has a head start and has a nice set of ported libraries
+already.
+
+*I care about which stays truer to Haskell.*
+
+ScalaZ does. Its core has a larger API and provides more features up-front.
+
+*I care about which has more industry backing.*
+
+[[https://www.jetbrains.com/research/devecosystem-2017/scala/][ScalaZ does.]]
+
+*I hear the IO Monad can help me logically organize my code.*
+
+[[http://degoes.net/articles/scalaz8-is-the-future][Wait for ScalaZ 8.]]
+
+*Futures suck and I hate JVM thread pools. Help?*
+
+[[http://degoes.net/articles/scalaz8-is-the-future][Wait for ScalaZ 8.]]
+
+*Just gimme Monads.*
+
+Then either is fine, you can flip a coin.
+
 ** Benchmarks
 
-Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktoso/sbt-jmh).
+Benchmarks were performed using the [[https://github.com/ktoso/sbt-jmh][JMH plugin for SBT]].
 Vanilla Scala and Haskell results are also included where applicable.
 
 *** Results
@@ -34,15 +80,24 @@ Vanilla Scala and Haskell results are also included where applicable.
 suffered from a strange JVM deoptimization:
 
 #+BEGIN_QUOTE
-# Warmup Iteration   1: 8967.747 ns/op
-# Warmup Iteration   2: 15492.176 ns/op
-# Warmup Iteration   3: 78857.592 ns/op
-# Warmup Iteration   4: 78532.147 ns/op
-# Warmup Iteration   5: 78953.201 ns/op
+Warmup Iteration   1: 8967.747 ns/op
+
+Warmup Iteration   2: 15492.176 ns/op
+
+Warmup Iteration   3: 78857.592 ns/op
+
+Warmup Iteration   4: 78532.147 ns/op
+
+Warmup Iteration   5: 78953.201 ns/op
+
 Iteration   1: 79065.639 ns/op
+
 Iteration   2: 78860.625 ns/op
+
 Iteration   3: 80211.784 ns/op
+
 Iteration   4: 78723.984 ns/op
+
 Iteration   5: 79408.957 ns/op
 #+END_QUOTE
 
@@ -72,7 +127,34 @@ will have to be reran when it is released.
 
 *** Accessibility
 
-Cats has much more documentation and usage examples.
+Up front, Cats has much more documentation and usage examples. Their import story
+is consistent - for most tasks you only need:
+
+#+BEGIN_SRC scala
+  import cats.implicits._
+#+END_SRC
+
+ScalaZ has examples to be sure, but I remember endless frustration in my early days
+of using it. My pain was caused almost entirely by import hell. From the ScalaZ
+README:
+
+#+BEGIN_QUOTE
+We've gone to great lengths to give you an a-la-carte importing experience,
+but if you prefer an all-you-can-eat buffet, you're in luck.
+#+END_QUOTE
+
+Honestly, avoid the a-la-carte imports and just do:
+
+#+BEGIN_SRC scala
+  import scalaz._
+  import Scalaz._
+#+END_SRC
+
+and you'll get all data types, typeclasses, instances, and operators.
+If you're willing to do that, then the import experience for both libraries
+becomes level.
+
+*** Features
 
 *** Monads and Monadic Recursion
 
@@ -80,8 +162,84 @@ Quote from cats:
 
 #+BEGIN_QUOTE
 Because monadic recursion is so common in functional programming but is not stack
-safe on the JVM, Cats has chosen to require [~tailRecM~] of all monad
+safe on the JVM, Cats has chosen to require ~tailRecM~ of all monad
 implementations as opposed to just a subset.
 #+END_QUOTE
 
-** Library Ecosystems
+** Library Health and Ecosystems
+
+*** Project Pulses
+
+As of 2017 November 6.
+
+| Project | Releases | Watchers | Stars | Forks | Commits | Prev. Month Commits | ScalaJS | Scala Native |
+|---------+----------+----------+-------+-------+---------+---------------------+---------+--------------|
+| ScalaZ  |      106 |      257 |  3312 |   534 |    6101 |                  45 | Yes     | Yes          |
+| Cats    |       22 |      174 |  2118 |   493 |    3280 |                  51 | Yes     | *No*         |
+
+ScalaZ's numbers are higher, but that's to be expected as it's an older project.
+Otherwise the projects seem to be about equally active.
+Notably missing is the lack of Scala Native support in Cats.
+
+*** Sub-libraries
+
+The diagram below looks one-sided, but must be taken with a grain of salt. As projects,
+Cats and ScalaZ have different aims. Cats has a small, tight core and espouses modularity.
+ScalaZ frames itself as a batteries-included standard library for FP in Scala. ScalaZ
+certainly has a larger and more featureful API than Cats at current. This will
+be increasingly true for the up-coming ScalaZ 8, which aims to provide the equivalent
+functionality of Dogs, Monocle, and Matryoshka directly. It also plans to provide
+low-level concurrency primitives which see no analogue in Cats or Vanilla Scala.
+
+That in mind, here is a simplified view of their library ecosystems:
+
+[[./ecosystem.png]]
+
+/Notes:/
+
+- Origami is a port of Haskell's [[https://hackage.haskell.org/package/foldl][foldl]] library
+- Atto is a port of Haskell's [[https://hackage.haskell.org/package/attoparsec][attoparsec]] library
+- Decline is a port of Haskell's [[https://hackage.haskell.org/package/optparse-applicative][optparse-applicative]] library
+- Refined is a port of Haskell's [[https://hackage.haskell.org/package/refined][refined]] library
+- Monocle is a port of Haskell's [[https://hackage.haskell.org/package/lens][lens]] library
+
+Libraries like ~circe~, ~atto~ and ~decline~ are immense standard-of-living
+improvements for Scala developers. I can't imagine that porting these to use
+ScalaZ would be hard, but this has yet to be done. In fact, we see the opposite
+trend. Libraries like Doobie, Monocle and FS2 have made explicit moves away from
+ScalaZ and onto Cats. Circe has this on their front page:
+
+#+BEGIN_QUOTE
+Circe depends on cats instead of Scalaz, and the core project has only one dependency (cats-core).
+#+END_QUOTE
+
+These are the echoes of the political events that lead to the creation of cats
+in the first place. I've heard it said that "the community is more behind cats",
+but I'm personally having a hard time confirming that. Factoids:
+
+- Some high-profile libraries have moved from ScalaZ to Cats
+- [[https://www.jetbrains.com/research/devecosystem-2017/scala/][ScalaZ sees greater use in industry]]
+- Cats' library ecosystem has a greater "standard-of-living" improvement
+- [[https://leanpub.com/fpmortals][There is a large book on ScalaZ being written]]
+
+Choosing one over the other based on community support seems dubious.
+I'll leave the judgement call up to you.
+
+*** Resources
+
+The tendency is for Cats to have better documentation and examples up-front, while
+ScalaZ has an extensive ~examples~ subpackage.
+
+**** ScalaZ
+
+- [[https://leanpub.com/fpmortals][Functional Programming for Mortals]] by Sam Halliday (book)
+- [[http://eed3si9n.com/learning-scalaz/index.html][Learning ScalaZ]] by Eugene Yokota (blog series)
+- [[http://eed3si9n.com/scalaz-cheat-sheet][Cheatsheet]] (typeclass usage and imports)
+- [[https://github.com/scalaz/scalaz][ScalaZ README]]
+- [[https://scalaz.github.io/scalaz/#scaladoc][Scaladocs]]
+
+**** Cats
+
+- [[https://typelevel.org/cats/][Cats Website]]
+- [[https://typelevel.org/cats/api/][Scaladocs]]
+- [[http://eed3si9n.com/herding-cats/][Herding Cats]] by Eugene Yokota (blog series)
