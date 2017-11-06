@@ -28,6 +28,11 @@ You'd be a champ to write a backend for both ScalaZ and Cats, but
 know that Cats has a head start and has a nice set of ported libraries
 already.
 
+*I'm writing a library/application that works with a complex DSL.*
+
+You probably need Recursion Schemes, which are suppied by the [[https://github.com/slamdata/matryoshka][Matryoshka]]
+library in ScalaZ-land.
+
 *I care about which stays truer to Haskell.*
 
 ScalaZ does. Its core has a larger API and provides more features up-front.
