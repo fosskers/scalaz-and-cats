@@ -4,26 +4,69 @@
 
 ** Benchmarks
 
+Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktoso/sbt-jmh).
+Vanilla Scala and Haskell results are also included where applicable.
+
+*** Results
+
 /All times are in nanoseconds./
 
-| Benchmark                                   | ScalaZ 7.3.0-M17 | Cats 1.0.0-MF | Vanilla Scala | Haskell 8.0.2 |
-|---------------------------------------------+------------------+---------------+---------------+---------------|
-| ~Eq~ - same list                            | 78,183           | 4.4           | 2.4           | 3,974         |
-| ~Eq~ - different list                       | 78,884           | 4,039         | 5,150         |               |
-| ~Show~ - ~[Int]~                            | 1,000,757        | 43,633        | 41,079        | 46,540        |
-| ~Show~ - ~String~                           | 216.6            | 3.2           | 2.8           | 199.4         |
-| ~Foldable.fold~ on ~[Int]~       | 3,355            | 5,026         | 7,939         | 3,330         |
-| ~Foldable.fold~ on ~[Maybe Int]~ | 10,740           | 12,506        |               | 15,440        |
-| ~State~ - oneGet                            | 17.9             | 33.3          |               | 4.1           |
-| ~State~ - bind                              | 90               | 139.1         |               | 10.43         |
-| ~State~ - ~flatMap~                         | 63.9             | 133.3         |               |               |
-| ~State~ - countdown                         | 4,259,320        | 2,071,480     |               | 6,069         |
-| ~State~ - countdownT                        |                  | 4,572,499     |               | 24,070        |
-| ~Applicative~ - sum ~(<*>)~                 | 31,709           | 32,132        |               | 22,140        |
-| ~Applicative~ - sum (cartesian)             | 50,431           | 33,638        |               |               |
-| ~IO~ - recurse 1000                         | 117,569          | 48,558        |               | 907.7         |
-| ~IO~ - recurse 10000                        | 1,183,352        | 503,889       |               | 9,095         |
-| ~IO~ - recurse 100000                       | 11,671,581       | 5,167,355     |               | 89,860        |
+| Benchmark                        | ScalaZ 7.3.0-M18 | Cats 1.0.0-RC1 | Vanilla Scala | Haskell 8.0.2 |
+|----------------------------------+------------------+----------------+---------------+---------------|
+| ~Eq~ - same list                 | 78,183           | 2.4            | 2.4           | 3,974         |
+| ~Eq~ - different list            | 78,884           | 4,039          | 5,150         |               |
+| ~Show~ - ~[Int]~                 | 1,000,757        | 43,633         | 41,079        | 46,540        |
+| ~Show~ - ~String~                | 216.6            | 3.2            | 2.8           | 199.4         |
+| ~Foldable.fold~ on ~[Int]~       | 3,355            | 5,026          | 7,939         | 3,330         |
+| ~Foldable.fold~ on ~[Maybe Int]~ | 10,740           | 12,506         |               | 15,440        |
+| ~State~ - ~get~                  | 17.9             | 33.3           |               | 4.1           |
+| ~State~ - ~>>=~                  | 90               | 139.1          |               | 10.43         |
+| ~State~ - ~flatMap~              | 63.9             | 133.3          |               |               |
+| ~State~ - countdown              | 4,259,320        | 2,071,480      |               | 6,069         |
+| ~StateT~ - countdown             |                  | 4,572,499      |               | 24,070        |
+| ~Applicative~ - sum ~(<*>)~      | 31,709           | 32,132         |               | 22,140        |
+| ~Applicative~ - sum (cartesian)  | 50,431           | 33,638         |               |               |
+| ~IO~ - recurse 1000              | 117,569          | 48,558         |               | 907.7         |
+| ~IO~ - recurse 10000             | 1,183,352        | 503,889        |               | 9,095         |
+| ~IO~ - recurse 100000            | 11,671,581       | 5,167,355      |               | 89,860        |
+
+/Note:/ For the ~Eq~ typeclass, at least in these benchmarks, ScalaZ consistently
+suffered from a strange JVM deoptimization:
+
+#+BEGIN_QUOTE
+# Warmup Iteration   1: 8967.747 ns/op
+# Warmup Iteration   2: 15492.176 ns/op
+# Warmup Iteration   3: 78857.592 ns/op
+# Warmup Iteration   4: 78532.147 ns/op
+# Warmup Iteration   5: 78953.201 ns/op
+Iteration   1: 79065.639 ns/op
+Iteration   2: 78860.625 ns/op
+Iteration   3: 80211.784 ns/op
+Iteration   4: 78723.984 ns/op
+Iteration   5: 79408.957 ns/op
+#+END_QUOTE
+
+This occurred for both the "same list" and "different list" benchmarks. Were it not for
+the deoptimization, ~Eq~ would perform at least within the same order of magnitude
+as Cats and Vanilla Scala. I have no idea what triggers the deopt.
+
+*** Observations
+
+- *Cats' type-safe equality checking is faster than Vanilla Scala.* So, there seems
+  to be no reason not to use Cats' ~===~ in all cases.
+- *Cats' type-safe String rendering via Show is as fast as Vanilla toString.* So ~.toString~
+  should be avoided.
+- At the small scale (i.e. a single ~>>=~), ScalaZ tends to be faster.
+- At aggregate scale, Cats tends to be faster.
+- Neither library performs well on recursive Monadic operations. Haskell is two to
+  three orders of magnitude faster in this regard. In particular, GHC heavily optimizes
+  both ~IO~ and ~State~ operations.
+
+*** Caveat
+
+As of this writing (2017 November), ScalaZ 8 is still under development but promises
+significant performance improvements for their ~IO~ Monad. The benchmarks above
+will have to be reran when it is released.
 
 ** The API
 
@@ -40,3 +83,5 @@ Because monadic recursion is so common in functional programming but is not stac
 safe on the JVM, Cats has chosen to require [~tailRecM~] of all monad
 implementations as opposed to just a subset.
 #+END_QUOTE
+
+** Library Ecosystems
