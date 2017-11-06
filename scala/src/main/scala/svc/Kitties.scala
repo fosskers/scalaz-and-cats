@@ -66,7 +66,7 @@ object Kitties {
     * cats went for `set` instead of Haskell's `put`.
     */
   def countdown: State[Int, Int] = State.get.flatMap({ n =>
-    if (n <= 0) State.pure(n) else State.set(n - 1) >> countdown
+    if (n <= 0) State.pure(n) else State.set(n - 1) *> countdown
   })
 
   /* WART: Type parameters don't curry in Scala, so in order to define Transformer stacks
@@ -84,7 +84,7 @@ object Kitties {
     */
   def countdownT: StEtr[Unit] = StateT.get[EitherStr, Int].flatMap({ n =>
     if (n <= 0) MonadError[StEtr, String].raiseError("crap")
-    else StateT.set[EitherStr, Int](n - 1) >> countdownT
+    else StateT.set[EitherStr, Int](n - 1) *> countdownT
   })
 
   /** `.value` needs to be called twice to fully evaluate the transformer stack. */
@@ -101,7 +101,7 @@ object Kitties {
     */
   def badCountdownT: StateT[EitherStr2, Int, Unit] = StateT.get[EitherStr2, Int].flatMap({ n =>
     if (n <= 0) StateT((_:Int) => Left("crap") : EitherStr2[(Int, Unit)])
-    else StateT.set[EitherStr2, Int](n - 1) >> badCountdownT
+    else StateT.set[EitherStr2, Int](n - 1) *> badCountdownT
   })
 
   /* --- APPLICATIVE --- */
@@ -146,7 +146,7 @@ object Kitties {
 
   /** The `IO` type is aware of exceptions and can help you handle them. */
   def ioException: IO[Unit] =
-    IO(println("Step 1")) >> IO { throw new Exception } >> IO(println("Step 2"))
+    IO(println("Step 1")) *> IO { throw new Exception } *> IO(println("Step 2"))
 
   /** Unlike ScalaZ, Cats avoids some Haskell patterns here and only offers
     * `.attempt`, which forces any Exception into pure-space to be handled
@@ -170,16 +170,16 @@ object Kitties {
    */
 
   def sleepy(msg: String, n: Int): IO[Unit] = {
-    if (n <= 0) IO(Unit) else IO(println(s"THREAD: ${msg} ${n}")) >> sleepy(msg, n-1)
+    if (n <= 0) IO(Unit) else IO(println(s"THREAD: ${msg} ${n}")) *> sleepy(msg, n-1)
   }
 
   def asyncIO: Unit = {
-    (sleepy("hi", 50) >> sleepy("ho", 50)).unsafeRunAsync({ _ => Unit })
+    (sleepy("hi", 50) *> sleepy("ho", 50)).unsafeRunAsync({ _ => Unit })
   }
 
   def aysink: Unit = {
     val act: IO[Unit] =
-      IO.async[Unit](f => f(Right(println("hi")))) >> IO.async[Unit](f => f(Right(println("ho")))) >> IO.async(f => f(Right(println("hm"))))
+      IO.async[Unit](f => f(Right(println("hi")))) *> IO.async[Unit](f => f(Right(println("ho")))) *> IO.async(f => f(Right(println("hm"))))
 
     act.unsafeRunAsync({ _ => Unit })
   }
