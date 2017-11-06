@@ -30,7 +30,7 @@ already.
 
 *I'm writing a library/application that works with a complex DSL.*
 
-You probably need Recursion Schemes, which are suppied by the [[https://github.com/slamdata/matryoshka][Matryoshka]]
+You probably need Recursion Schemes, which are supplied by the [[https://github.com/slamdata/matryoshka][Matryoshka]]
 library in ScalaZ-land.
 
 *I care about which stays truer to Haskell.*
