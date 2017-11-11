@@ -11,6 +11,10 @@ Should I use ScalaZ or Cats?
 
 The answer is, of course, "it depends". What's your use-case?
 
+*I am concerned about developer knowledge*
+
+Lean towards Scalaz, it has more resources available including a book by the authors on [[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]] and [[https://leanpub.com/fpmortals][a book for beginners]].
+
 *I'm writing a performance-sensitive application.*
 
 Lean toward Cats, it tends to be faster in aggregate. Are you using a
