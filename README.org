@@ -257,9 +257,11 @@ ScalaZ has an extensive ~examples~ subpackage.
 - [[http://eed3si9n.com/scalaz-cheat-sheet][Cheatsheet]] (typeclass usage and imports)
 - [[https://github.com/scalaz/scalaz][ScalaZ README]]
 - [[https://scalaz.github.io/scalaz/#scaladoc][Scaladocs]]
+- [[https://gitter.im/scalaz/scalaz][ScalaZ Gitter]]
 
 **** Cats
 
 - [[https://typelevel.org/cats/][Cats Website]]
 - [[https://typelevel.org/cats/api/][Scaladocs]]
 - [[http://eed3si9n.com/herding-cats/][Herding Cats]] by Eugene Yokota (blog series)
+- [[https://gitter.im/typelevel/cats][Cats Gitter]]
