@@ -40,15 +40,25 @@ library in ScalaZ-land.
 
 *I care about which stays truer to Haskell.*
 
-ScalaZ does. Its core has a larger API and provides more features up-front.
+ScalaZ does. Its core has a larger API, provides more features up-front,
+and tends to keep Haskell function names and operators (e.g. ~<*>~).
 
 *I care about which has more industry backing.*
 
-[[https://www.jetbrains.com/research/devecosystem-2017/scala/][ScalaZ does.]]
+[[https://www.jetbrains.com/research/devecosystem-2017/scala/][According to this survey]], ScalaZ does.
 
 *I hear the IO Monad can help me logically organize my code.*
 
-[[http://degoes.net/articles/scalaz8-is-the-future][Wait for ScalaZ 8.]]
+Both ScalaZ 7 and Cats have a ~effects~ subpackage which provides an
+~IO~ type. They both help you contain "real world" side-effects into
+smaller areas of your code base, freeing the rest of it to purity
+([[https://en.wikipedia.org/wiki/Referential_transparency][referential transparency]]). They also help you wrangle IO-based
+Exceptions.
+
+Cats' ~IO~ is currently faster in aggregate. However, an overhaul
+of ~scalaz-effects~ with many orders of magnitude of improvement in
+performance is promised [[http://degoes.net/articles/scalaz8-is-the-future][for ScalaZ 8]], so you may want to wait
+for that if IO is a great concern to you.
 
 *Futures suck and I hate JVM thread pools. Help?*
 
