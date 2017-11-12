@@ -1,9 +1,12 @@
-#+TITLE: ScalaZ and Cats Comparison
+#+TITLE: ScalaZ and Cats
 #+AUTHOR: Colin
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/colin/code/org-theme.css"/>
 
-This is a comparison of ScalaZ and Cats by someone who isn't predisposed
-to either library. It seeks to answer the following question:
+ScalaZ and Cats are libraries which provide Functional Programming constructs
+for Scala (i.e. ~Monad~ n' friends).
+
+This repository is a comparison of these two libraries by someone who isn't predisposed
+to either one. It seeks to answer the following question:
 
 #+BEGIN_QUOTE
 Should I use ScalaZ or Cats?
@@ -11,45 +14,55 @@ Should I use ScalaZ or Cats?
 
 The answer is, of course, "it depends". What's your use-case?
 
-*I want to train my Scala team in Functional Programming fundamentals.*
+** Use Cases
 
-Lean toward ScalaZ, it has two books written on it. [[https://www.manning.com/books/functional-programming-in-scala][One by its authors]]
-and [[https://leanpub.com/fpmortals][one for beginners which assumes a Java background]]. Cats has a book for an [[https://underscore.io/books/advanced-scala/][advanced audience]].
+*** I want to train my Scala team in Functional Programming fundamentals
 
-Commercial training is available for scalaz from the [[http://fantasyland.institute/][Fantasyland Institute]] and for cats from [[https://underscore.io/training/courses/advanced-scala/][Underscore Consultants]].
+Both ScalaZ and Cats have books and professional training available.
 
-*I'm writing a performance-sensitive application.*
+ScalaZ:
+
+- [[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]] by the ScalaZ authors
+- [[https://leanpub.com/fpmortals][Functional Programming for Mortals]] by Sam Halliday (for beginners - assumes a Java background)
+- Training by the [[http://fantasyland.institute/][Fantasyland Institute]]
+
+Cats:
+
+- [[https://underscore.io/books/advanced-scala/][Advanced Scala with Cats]] by Noel Welsh and Dave Gurnell (assumes 1+ years of Scala experience)
+- Training by [[https://underscore.io/training/courses/advanced-scala/][Underscore Consultants]]
+
+*** I'm writing a performance-sensitive application
 
 Lean toward Cats, it tends to be faster in aggregate. Are you using a
 database? Consider [[https://github.com/tpolecat/doobie][Doobie]], which uses Cats.
 
-*I want to improve quality-of-life for my Scala devs.*
+*** I want to improve quality-of-life for my Scala devs
 
 Any dedicated application of FP concepts will help you organize and simplify
 your code. However, Cats has a wider ecosystem of go-to FP libraries
 that can bring drastic and immediate wins to your projects.
 
-*I want to port a well-known, general-purpose Haskell library to Scala.*
+*** I'm writing a library/application that works with a complex DSL
+
+You probably need Recursion Schemes, which are supplied by the [[https://github.com/slamdata/matryoshka][Matryoshka]]
+library in ScalaZ-land.
+
+*** I want to port a well-known, general-purpose Haskell library to Scala
 
 You'd be a champ to write a backend for both ScalaZ and Cats, but
 know that Cats has a head start and has a nice set of ported libraries
 already.
 
-*I'm writing a library/application that works with a complex DSL.*
-
-You probably need Recursion Schemes, which are supplied by the [[https://github.com/slamdata/matryoshka][Matryoshka]]
-library in ScalaZ-land.
-
-*I care about which stays truer to Haskell.*
+*** I care about which stays truer to Haskell
 
 ScalaZ does. Its core has a larger API, provides more features up-front,
 and tends to keep Haskell function names and operators (e.g. ~<*>~).
 
-*I care about which has more industry backing.*
+*** I care about which has more industry backing
 
 [[https://www.jetbrains.com/research/devecosystem-2017/scala/][According to this survey]], ScalaZ does.
 
-*I hear the IO Monad can help me logically organize my code.*
+*** I hear the ~IO~ Monad can help me logically organize my code
 
 Both ScalaZ 7 and Cats have a ~effects~ subpackage which provides an
 ~IO~ type. They both help you contain "real world" side-effects into
@@ -62,11 +75,11 @@ of ~scalaz-effects~ with many orders of magnitude of improvement in
 performance is promised [[http://degoes.net/articles/scalaz8-is-the-future][for ScalaZ 8]], so you may want to wait
 for that if IO is a great concern to you.
 
-*Futures suck and I hate JVM thread pools. Help?*
+*** Futures suck and I hate JVM thread pools. Help?
 
 [[http://degoes.net/articles/scalaz8-is-the-future][Wait for ScalaZ 8.]]
 
-*Just gimme Monads.*
+*** Just gimme Monads
 
 Then either is fine, you can flip a coin.
 
