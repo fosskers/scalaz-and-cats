@@ -14,7 +14,9 @@ The answer is, of course, "it depends". What's your use-case?
 *I want to train my Scala team in Functional Programming fundamentals.*
 
 Lean toward ScalaZ, it has two books written on it. [[https://www.manning.com/books/functional-programming-in-scala][One by its authors]]
-and [[https://leanpub.com/fpmortals][one for beginners which assumes a Java background.]]
+and [[https://leanpub.com/fpmortals][one for beginners which assumes a Java background]]. Cats has a book for an [[https://underscore.io/books/advanced-scala/][advanced audience]].
+
+Commercial training is available for scalaz from the [[http://fantasyland.institute/][Fantasyland Institute]] and for cats from [[https://underscore.io/training/courses/advanced-scala/][Underscore Consultants]].
 
 *I'm writing a performance-sensitive application.*
 
