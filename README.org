@@ -6,7 +6,10 @@ ScalaZ and Cats are libraries which provide Functional Programming constructs
 for Scala (i.e. ~Monad~ n' friends).
 
 This repository is a comparison of these two libraries by someone who isn't predisposed
-to either one. It seeks to answer the following question:
+to either one. If you're a contributor to either library and notice a discrepancy here,
+please let me know!
+
+We seek to answer the following question:
 
 #+BEGIN_QUOTE
 Should I use ScalaZ or Cats?
@@ -22,8 +25,8 @@ Both ScalaZ and Cats have books and professional training available.
 
 ScalaZ:
 
-- [[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]] by the ScalaZ authors
-- [[https://leanpub.com/fpmortals][Functional Programming for Mortals]] by Sam Halliday (for beginners - assumes a Java background)
+- [[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]] by the ScalaZ authors (for Scala beginners)
+- [[https://leanpub.com/fpmortals][Functional Programming for Mortals]] by Sam Halliday (for FP beginners - assumes an OO Scala background)
 - Training by the [[http://fantasyland.institute/][Fantasyland Institute]]
 
 Cats:
@@ -162,23 +165,20 @@ will have to be reran when it is released.
 
 *** Accessibility
 
-Up front, Cats has much more documentation and usage examples. Their import story
-is consistent - for most tasks you only need:
+Up front, Cats has much more documentation and usage examples. Their website is
+good for this. However, given that they both have blog posts and books written about
+them, overall the availability of resources should be about equal between the
+two libraries.
+
+The Cats import story is consistent - for most tasks you only need:
 
 #+BEGIN_SRC scala
-  import cats.implicits._
+  import cats._            /* To refer to top-level symbols like Monad */
+  import cats.implicits._  /* To get typeclass instances and operators */
 #+END_SRC
 
-ScalaZ has examples to be sure, but I remember endless frustration in my early days
-of using it. My pain was caused almost entirely by import hell. From the ScalaZ
-README:
-
-#+BEGIN_QUOTE
-We've gone to great lengths to give you an a-la-carte importing experience,
-but if you prefer an all-you-can-eat buffet, you're in luck.
-#+END_QUOTE
-
-Honestly, avoid the a-la-carte imports and just do:
+ScalaZ has a bit more flexibility with their imports, but honestly you can
+just avoid that and do:
 
 #+BEGIN_SRC scala
   import scalaz._
@@ -187,19 +187,51 @@ Honestly, avoid the a-la-carte imports and just do:
 
 and you'll get all data types, typeclasses, instances, and operators.
 If you're willing to do that, then the import experience for both libraries
-becomes level.
+is the same.
 
 *** Features
 
 *** Monads and Monadic Recursion
 
-Quote from cats:
+If you're not careful, Monadic Recursion with ScalaZ can blow the JVM stack.
+For instance, the following will "just work" with Cats:
+
+#+BEGIN_SRC scala
+  def countdown: State[Int, Int] = State.get.flatMap { n =>
+    if (n <= 0) State.pure(n) else State.set(n - 1) *> countdown
+  }
+#+END_SRC
+
+Which in ScalaZ would blow the stack for ~n~ greater than a few thousand.
+The proper ScalaZ equivalent is:
+
+#+BEGIN_SRC scala
+  def trampolineCountdown: StateT[Trampoline, Int, Int] = State.get.lift[Trampoline].flatMap{ n =>
+    if (n <= 0) StateT(_ => Trampoline.done((n,n)))
+    else State.put(n - 1).lift[Trampoline] >> trampolineCountdown
+  }
+#+END_SRC
+
+~Trampoline~ seems like an implementation detail, but it's exposed to the user here.
+
+A quote from Cats:
 
 #+BEGIN_QUOTE
 Because monadic recursion is so common in functional programming but is not stack
 safe on the JVM, Cats has chosen to require ~tailRecM~ of all monad
 implementations as opposed to just a subset.
 #+END_QUOTE
+
+So ~tailRecM~ gets us stack safety - if you can figure out how to implement it
+correctly. I tried for ~Tree~ and was not successful.
+
+John de Goes on ScalaZ 8:
+
+#+BEGIN_QUOTE
+~tailRecM~ will not be a function on Monad, because not all monads can implement it in constant stack space.
+#+END_QUOTE
+
+So ScalaZ chooses lawfulness over convenience in this case.
 
 ** Library Health and Ecosystems
 
