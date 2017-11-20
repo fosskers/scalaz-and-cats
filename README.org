@@ -42,8 +42,9 @@ database? Consider [[https://github.com/tpolecat/doobie][Doobie]], which uses Ca
 *** I want to improve quality-of-life for my Scala devs
 
 Any dedicated application of FP concepts will help you organize and simplify
-your code. However, Cats has a wider ecosystem of go-to FP libraries
-that can bring drastic and immediate wins to your projects.
+your code. Libaries like [[https://github.com/mpilquist/simulacrum][simulacrum]], [[https://github.com/bkirwi/decline][decline]] and [[https://github.com/circe/circe][circe]] can provide immediate wins
+by drastically cutting down boilerplate. The latter two can be used natively with Cats,
+or via ScalaZ with the [[https://github.com/djspiewak/shims][shims]] library.
 
 *** I'm writing a library/application that works with a complex DSL
 
@@ -270,27 +271,44 @@ That in mind, here is a simplified view of their library ecosystems:
 - Refined is a port of Haskell's [[https://hackage.haskell.org/package/refined][refined]] library
 - Monocle is a port of Haskell's [[https://hackage.haskell.org/package/lens][lens]] library
 
+**** Shims
+
 Libraries like ~circe~, ~atto~ and ~decline~ are immense standard-of-living
-improvements for Scala developers. I can't imagine that porting these to use
-ScalaZ would be hard, but this has yet to be done. In fact, we see the opposite
-trend. Libraries like Doobie, Monocle and FS2 have made explicit moves away from
-ScalaZ and onto Cats. Circe has this on their front page:
+improvements for Scala developers. Luckily, the [[https://github.com/djspiewak/shims][shims library]] allows us
+to use them via ScalaZ, too. Likewise, Matryoshka becomes usable
+via Cats. From the ~shims~ project:
 
 #+BEGIN_QUOTE
-Circe depends on cats instead of Scalaz, and the core project has only one dependency (cats-core).
+Shims aims to provide a convenient, bidirectional, and transparent set of conversions
+between scalaz and cats, covering typeclasses (e.g. ~Monad~) and data types (e.g. ~\/~).
+By that I mean, with shims, anything that has a ~cats.Functor~ instance also has a ~scalaz.Functor~
+instance, and vice versa.
 #+END_QUOTE
 
-These are the echoes of the political events that lead to the creation of cats
-in the first place. I've heard it said that "the community is more behind cats",
-but I'm personally having a hard time confirming that. Factoids:
+[[https://github.com/fosskers/shimmy][Here is a working example:]]
 
-- Some high-profile libraries have moved from ScalaZ to Cats
-- [[https://www.jetbrains.com/research/devecosystem-2017/scala/][ScalaZ sees greater use in industry]]
-- Cats' library ecosystem has a greater "standard-of-living" improvement
-- [[https://leanpub.com/fpmortals][There is a large book on ScalaZ being written]]
+#+BEGIN_SRC scala
+  package shimmy
 
-Choosing one over the other based on community support seems dubious.
-I'll leave the judgement call up to you.
+  import scalaz._
+  import Scalaz._
+  import shims._
+  import com.monovore.decline._  /* Depends on Cats */
+
+  object Shimmy extends CommandApp(
+    name = "shimmy",
+    header = "Demonstrate how shims works.",
+    main = {
+      /* These are `decline` data types with `Applicative` instances from Cats */
+      val foo = Opts.option[String]("foo", help = "Foo")
+      val bar = Opts.option[Int]("bar", help = "Bar")
+      val baz = Opts.flag("baz", help = "Baz").orFalse
+
+      /* These are ScalaZ operators that use ScalaZ's `Applicative` */
+      (foo |@| bar |@| baz) { (_, _, _) => println("It worked!") }
+    }
+  )
+#+END_SRC
 
 *** Resources
 
