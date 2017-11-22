@@ -31,7 +31,7 @@ ScalaZ:
 
 Cats:
 
-- [[https://underscore.io/books/advanced-scala/][Advanced Scala with Cats]] by Noel Welsh and Dave Gurnell (assumes 1+ years of Scala experience)
+- [[https://underscore.io/books/scala-with-cats/][Scala with Cats]] by Noel Welsh and Dave Gurnell (assumes 1+ years of Scala experience)
 - Training by [[https://underscore.io/training/courses/advanced-scala/][Underscore Consultants]]
 
 *** I'm writing a performance-sensitive application
@@ -327,6 +327,7 @@ ScalaZ has an extensive ~examples~ subpackage.
 **** Cats
 
 - [[https://typelevel.org/cats/][Cats Website]]
+- [[https://underscore.io/books/scala-with-cats/][Scala with Cats]] by Noel Walsh and Dave Gurnell (book)
 - [[https://typelevel.org/cats/api/][Scaladocs]]
 - [[http://eed3si9n.com/herding-cats/][Herding Cats]] by Eugene Yokota (blog series)
 - [[https://gitter.im/typelevel/cats][Cats Gitter]]
