@@ -58,6 +58,18 @@ object Zed {
 
   /* --- EQUAL --- */
 
+  @deriving(Equal)
+  case class Foo(age: Int, msg: String, truthy: Boolean)
+
+  /*
+  object Foo {
+    implicit val eqFoo: Equal[Foo] = new Equal[Foo] {
+      def equal(foo0: Foo, foo1: Foo): Boolean =
+        foo0.eq(foo1) || (foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy)
+    }
+  }
+   */
+
   /** Scala has "universal equality". We can compare any two objects as equal, even
     * if it doesn't make sense to. Even if that type has no notion of equality (like `Function`).
     *
@@ -77,12 +89,25 @@ object Zed {
 
   def equalAll[A: Equal](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
-  def equalWhile: Boolean = {
+  def equalWhileInt(arr: Array[Int]): Boolean = {
     var res: Boolean = false
     var i: Int = 0
 
-    while (i < 10000) {
-      res = i === 10000
+    while (i < arr.length) {
+      res = arr(i) === 10000
+      i += 1
+    }
+
+    res
+  }
+
+  def equalWhileClass(arr: Array[Foo]): Boolean = {
+    var res: Boolean = false
+    var i: Int = 0
+    val target: Foo = Foo(10000, "hello there", true)
+
+    while (i < arr.length) {
+      res = arr(i) === target
       i += 1
     }
 

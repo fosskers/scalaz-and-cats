@@ -19,6 +19,16 @@ object Kitties {
 
   /* --- EQUAL --- */
 
+  case class Foo(age: Int, msg: String, truthy: Boolean)
+
+  object Foo {
+    // implicit val fooShow: Eq[Foo] = derive.eq[Foo]
+    implicit val fooEq: Eq[Foo] = new Eq[Foo] {
+      def eqv(foo0: Foo, foo1: Foo): Boolean =
+        foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy
+    }
+  }
+
   /* Same "triple equals" as ScalaZ. Cats matched Haskell in calling
    * their typeclass `Eq`.
 
@@ -29,12 +39,25 @@ object Kitties {
 
   def equalAll[A: Eq](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
-  def equalWhile: Boolean = {
+  def equalWhileInt(arr: Array[Int]): Boolean = {
     var res: Boolean = false
     var i: Int = 0
 
-    while (i < 10000) {
-      res = i === 10000
+    while (i < arr.length) {
+      res = arr(i) === 1000
+      i += 1
+    }
+
+    res
+  }
+
+  def equalWhileClass(arr: Array[Foo]): Boolean = {
+    var res: Boolean = false
+    var i: Int = 0
+    val target: Foo = Foo(1000, "hello there", true)
+
+    while (i < arr.length) {
+      res = arr(i) === target
       i += 1
     }
 

@@ -12,11 +12,18 @@ val common = Seq(
     "-Ypartial-unification"
   ),
 
+  resolvers += Resolver.sonatypeRepo("snapshots"),
+
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core"     % "1.0.0-RC1",
-    "org.typelevel" %% "cats-effect"   % "0.5",
-    "org.scalaz"    %% "scalaz-core"   % "7.2.16",
-    "org.scalaz"    %% "scalaz-effect" % "7.2.16"
+    "com.fommil"    %% "deriving-macro"  % "0.9.1-SNAPSHOT",
+    "com.fommil"    %% "scalaz-deriving" % "0.9.1-SNAPSHOT",
+    "org.typelevel" %% "cats-core"       % "1.0.0-RC1",
+    "org.typelevel" %% "cats-effect"     % "0.5",
+    "org.typelevel" %% "kittens"         % "1.0.0-RC1",
+    "org.scalaz"    %% "scalaz-core"     % "7.2.16",
+    "org.scalaz"    %% "scalaz-effect"   % "7.2.16"
   )
 )
 
@@ -25,6 +32,6 @@ lazy val lib = project.in(file(".")).settings(common)
 
 /* Benchmarking suite.
  * Benchmarks can be executed by first switching to the `bench` project and then by running:
- *     jmh:run -t 1 -f 1 -wi 5 -i 5 .*Bench.*
+      jmh:run -t 1 -f 1 -wi 5 -i 5 .*Bench.*
  */
 lazy val bench = project.in(file("bench")).settings(common).dependsOn(lib).enablePlugins(JmhPlugin)
