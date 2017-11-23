@@ -25,15 +25,31 @@ class EqualBench {
   def equalSameVanilla: Boolean = list0 == list0
   @Benchmark
   def equalDiffVanilla: Boolean = list0 == list1
+  @Benchmark
+  def equalWhileVanilla: Boolean = {
+    var res: Boolean = false
+    var i: Int = 0
+
+    while (i < 10000) {
+      res = i == 10000
+      i += 1
+    }
+
+    res
+  }
 
   @Benchmark
   def equalSameCats: Boolean = Kitties.equalAll(list0, list0)
   @Benchmark
   def equalDiffCats: Boolean = Kitties.equalAll(list0, list1)
+  @Benchmark
+  def equalWhileCats: Boolean = Kitties.equalWhile
 
   @Benchmark
   def equalSameScalaz: Boolean = Zed.equalAll(list0, list0)
   @Benchmark
   def equalDiffScalaz: Boolean = Zed.equalAll(list0, list1)
+  @Benchmark
+  def equalWhileScalaz: Boolean = Zed.equalWhile
 
 }

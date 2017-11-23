@@ -29,6 +29,18 @@ object Kitties {
 
   def equalAll[A: Eq](l0: List[A], l1: List[A]): Boolean = l0 === l1
 
+  def equalWhile: Boolean = {
+    var res: Boolean = false
+    var i: Int = 0
+
+    while (i < 10000) {
+      res = i === 10000
+      i += 1
+    }
+
+    res
+  }
+
   /* --- SEMIGROUP / MONOID --- */
 
   /* Usually `combineAll` is called `fold`, but that doesn't work here because of
