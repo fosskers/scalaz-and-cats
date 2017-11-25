@@ -22,8 +22,8 @@ val common = Seq(
     "org.typelevel" %% "cats-core"       % "1.0.0-RC1",
     "org.typelevel" %% "cats-effect"     % "0.5",
     "org.typelevel" %% "kittens"         % "1.0.0-RC1",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.16",
-    "org.scalaz"    %% "scalaz-effect"   % "7.2.16"
+    "org.scalaz"    %% "scalaz-core"     % "7.2.17",
+    "org.scalaz"    %% "scalaz-effect"   % "7.2.17"
   )
 )
 

@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import cats.implicits._
 import org.openjdk.jmh.annotations._
+import scalaz.{IList, ImmutableArray}
 import scalaz.Scalaz._
 
 // --- //
@@ -18,27 +19,31 @@ class EqualBench {
   var list1: List[Int] = _
   var listK1: List[Kitties.Foo] = _
   var listK2: List[Kitties.Foo] = _
-  var listZ1: List[Zed.Foo] = _
-  var listZ2: List[Zed.Foo] = _
+  var listz1: IList[Int] = _
+  var listz2: IList[Int] = _
+  var listZ1: IList[Zed.Foo] = _
+  var listZ2: IList[Zed.Foo] = _
   var listV1: List[Bar] = _
   var listV2: List[Bar] = _
   var arr0:  Array[Int] = _
   var arrK:  Array[Kitties.Foo] = _
-  var arrZ:  Array[Zed.Foo] = _
+  var arrZ:  ImmutableArray[Zed.Foo] = _
   var arrV:  Array[Bar] = _
 
   @Setup
   def setup(): Unit = {
     arrK  = Array.range(1, 1000).map(_ => Kitties.Foo(1000, "hello therE", true))
-    arrZ  = Array.range(1, 1000).map(_ => Zed.Foo(1000, "hello therE", true))
+    arrZ  = ImmutableArray.fromArray(Array.range(1, 1000).map(_ => Zed.Foo(1000, "hello therE", true)))
     arrV  = Array.range(1, 1000).map(_ => Bar(1000, "hello therE", true))
     arr0  = Array.range(1, 1000)
     list0 = List.range(1, 1000)
     list1 = List.range(1, 1000)
     listK1 = arrK.toList
     listK2 = arrK.toList
-    listZ1 = arrZ.toList
-    listZ2 = arrZ.toList
+    listz1 = IList.fromList(List.range(1, 1000))
+    listz2 = IList.fromList(List.range(1, 1000))
+    listZ1 = IList.fromList(arrZ.toList)
+    listZ2 = IList.fromList(arrZ.toList)
     listV1 = arrV.toList
     listV2 = arrV.toList
   }
@@ -68,6 +73,7 @@ class EqualBench {
     res
   }
 
+  /*
   @Benchmark
   def equalSameIntVanilla: Boolean = list0 == list0
   @Benchmark
@@ -93,13 +99,14 @@ class EqualBench {
   def equalWhileIntCats: Boolean = Kitties.equalWhileInt(arr0)
   @Benchmark
   def equalWhileClassCats: Boolean = Kitties.equalWhileClass(arrK)
+   */
 
   @Benchmark
-  def equalSameIntScalaz: Boolean = Zed.equalAll(list0, list0)
+  def equalSameIntScalaz: Boolean = Zed.equalAll(listz1, listz1)
   @Benchmark
   def equalSameClassScalaz: Boolean = Zed.equalAll(listZ1, listZ1)
   @Benchmark
-  def equalDiffIntScalaz: Boolean = Zed.equalAll(list0, list1)
+  def equalDiffIntScalaz: Boolean = Zed.equalAll(listz1, listz2)
   @Benchmark
   def equalDiffClassScalaz: Boolean = Zed.equalAll(listZ1, listZ2)
   @Benchmark

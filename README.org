@@ -99,31 +99,31 @@ Vanilla Scala and Haskell results are also included where applicable.
 - ~scalaz-deriving v0.9.1-SNAPSHOT~
 - ~kittens 1.0.0-RC1~
 
-| Benchmark                               | ScalaZ 7.2.16 | Cats 1.0.0-RC1 | Vanilla Scala | Haskell 8.0.2 |
-|-----------------------------------------+---------------+----------------+---------------+---------------|
-| ~Eq~ - same ~[Int]~                     | 78,653        | 2.5            | 2.4           | 3,974         |
-| ~Eq~ - different ~[Int]~                | 80,508        | 3,983          | 5,180         |               |
-| ~Eq~ - ~while~ w/ ~Int~                 | 3,226         | 199            | 198           |               |
-| ~Eq~ (derived) - same ~[Foo]~           | 79,150        | 2.8            | 2.5           |               |
-| ~Eq~ (derived) - different ~[Foo]~      | 80,737        | 38,630         | 2,071         |               |
-| ~Eq~ (derived) - ~while~ w/ ~Foo~       | 470,323       | 40,113         | 5,335         |               |
-| ~Eq~ (hand-written) - same ~[Foo]~      | 26,673        | 2.8            | 2.5           |               |
-| ~Eq~ (hand-written) - different ~[Foo]~ | 26,638        | 7,835          | 2,071         |               |
-| ~Eq~ (hand-written) - ~while~ w/ ~Foo~  | 10,771        | 5,341          | 5,335         |               |
-| ~Show~ - ~[Int]~                        | 1,000,757     | 43,633         | 41,079        | 46,540        |
-| ~Show~ - ~String~                       | 216.6         | 3.2            | 2.8           | 199.4         |
-| ~Foldable.fold~ on ~[Int]~              | 3,355         | 5,026          | 7,939         | 3,330         |
-| ~Foldable.fold~ on ~[Maybe Int]~        | 10,740        | 12,506         |               | 15,440        |
-| ~State~ - ~get~                         | 17.9          | 33.3           |               | 4.1           |
-| ~State~ - ~>>=~                         | 90            | 139.1          |               | 10.43         |
-| ~State~ - ~flatMap~                     | 63.9          | 133.3          |               |               |
-| ~State~ - countdown                     | 4,259,320     | 2,071,480      |               | 6,069         |
-| ~StateT~ - countdown                    |               | 4,572,499      |               | 24,070        |
-| ~Applicative~ - sum ~(<*>)~             | 31,709        | 32,132         |               | 22,140        |
-| ~Applicative~ - sum (cartesian)         | 50,431        | 33,638         |               |               |
-| ~IO~ - recurse 1000                     | 117,569       | 48,558         |               | 907.7         |
-| ~IO~ - recurse 10000                    | 1,183,352     | 503,889        |               | 9,095         |
-| ~IO~ - recurse 100000                   | 11,671,581    | 5,167,355      |               | 89,860        |
+| Benchmark                               | ScalaZ 7.2.16 | ScalaZ 7.2.17 | Cats 1.0.0-RC1 | Vanilla Scala | Haskell 8.0.2 |
+|-----------------------------------------+---------------+---------------+----------------+---------------+---------------|
+| ~Eq~ - same ~[Int]~                     | 78,653        | *11.5*        | 2.5            | 2.4           | 3,974         |
+| ~Eq~ - different ~[Int]~                | 80,508        | *5,753*       | 3,983          | 5,180         |               |
+| ~Eq~ - ~while~ w/ ~Int~                 | 3,226         | 3,223         | 199            | 198           |               |
+| ~Eq~ (derived) - same ~[Foo]~           | 79,150        | *10.2*        | 2.8            | 2.5           |               |
+| ~Eq~ (derived) - different ~[Foo]~      | 80,737        | *2,945*       | 38,630         | 2,071         |               |
+| ~Eq~ (derived) - ~while~ w/ ~Foo~       | 470,323       | 463,595       | 40,113         | 5,335         |               |
+| ~Eq~ (hand-written) - same ~[Foo]~      | 26,673        | *10.1*        | 2.8            | 2.5           |               |
+| ~Eq~ (hand-written) - different ~[Foo]~ | 26,638        | *2,962*       | 7,835          | 2,071         |               |
+| ~Eq~ (hand-written) - ~while~ w/ ~Foo~  | 10,771        | *3,156*       | 5,341          | 5,335         |               |
+| ~Show~ - ~[Int]~                        | 1,000,757     |               | 43,633         | 41,079        | 46,540        |
+| ~Show~ - ~String~                       | 216.6         |               | 3.2            | 2.8           | 199.4         |
+| ~Foldable.fold~ on ~[Int]~              | 3,355         |               | 5,026          | 7,939         | 3,330         |
+| ~Foldable.fold~ on ~[Maybe Int]~        | 10,740        |               | 12,506         |               | 15,440        |
+| ~State~ - ~get~                         | 17.9          |               | 33.3           |               | 4.1           |
+| ~State~ - ~>>=~                         | 90            |               | 139.1          |               | 10.43         |
+| ~State~ - ~flatMap~                     | 63.9          |               | 133.3          |               |               |
+| ~State~ - countdown                     | 4,259,320     |               | 2,071,480      |               | 6,069         |
+| ~StateT~ - countdown                    |               |               | 4,572,499      |               | 24,070        |
+| ~Applicative~ - sum ~(<*>)~             | 31,709        |               | 32,132         |               | 22,140        |
+| ~Applicative~ - sum (cartesian)         | 50,431        |               | 33,638         |               |               |
+| ~IO~ - recurse 1000                     | 117,569       |               | 48,558         |               | 907.7         |
+| ~IO~ - recurse 10000                    | 1,183,352     |               | 503,889        |               | 9,095         |
+| ~IO~ - recurse 100000                   | 11,671,581    |               | 5,167,355      |               | 89,860        |
 
 /Note:/ For the ~Eq~ typeclass, at least in these benchmarks, ScalaZ consistently
 suffered from a strange JVM deoptimization:
