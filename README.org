@@ -215,7 +215,7 @@ In general, the ScalaZ typeclass hierarchy is larger than the Cats' one.
 
 Scala doesn't yet have first-class support for typeclasses. While it's very possible
 to create trait/object structures that represent a typeclass, there is no built-in
-syntax for it. The library [[https://github.com/mpilquist/simulacrum][simulacrum]] helps significantly with this:
+syntax for it. The library [[https://github.com/mpilquist/simulacrum][simulacrum]] helps greatly with this:
 
 #+BEGIN_SRC scala
   package mylib
@@ -261,6 +261,51 @@ And then full use of your typeclass is just one import away!
 #+END_SRC
 
 **** Instance Derivation
+
+In Haskell, automatic typeclass instance derivation is frequent:
+
+#+BEGIN_SRC haskell
+  -- The usuals - many more can be derived.
+  data User = User { age  :: Int
+                   , name :: Text
+                   } deriving (Eq, Ord, Show, NFData, Generic, ToJSON, FromJSON)
+#+END_SRC
+
+Fortunately, both ScalaZ and Cats provide a similar mechanism. Nobody wants to
+write boilerplate!
+
+[[https://gitlab.com/fommil/scalaz-deriving/][scalaz-deriving]] exposes the ~@deriving~ macro for ScalaZ typeclasses:
+
+#+BEGIN_SRC scala
+  @deriving(Equal, Show, Encoder, Decoder)
+  case class User(age: Int, name: String)
+#+END_SRC
+
+Where ~Encoder~ and ~Decoder~ are from ~play.json~.
+
+[[https://github.com/milessabin/kittens][Kittens]] provides shapeless-based "semi-auto" derivation for Cats:
+
+#+BEGIN_SRC scala
+  case class User(age: Int, name: String)
+
+  object User {
+    implicit val userEq: Eq[User] = cats.derive.eq[User]
+    implicit val userShow: Show[User] = cats.derive.show[User]
+  }
+#+END_SRC
+
+Which requires more typing, but has more features, like auto-derivation of
+[[https://github.com/milessabin/kittens/blob/master/core/src/main/scala/cats/derive.scala][higher-kinded things]] like ~Functor~.
+
+For Circe ~Encoder~ and ~Decoder~ instances specifically, the following was
+already possible:
+
+#+BEGIN_SRC scala
+  import io.circe.generic.JsonCodec
+
+  @JsonCodec
+  case class User(age: Int, name: String)
+#+END_SRC
 
 *** Monads and Monadic Recursion
 
