@@ -94,7 +94,7 @@ Vanilla Scala and Haskell results are also included where applicable.
 
 *** Results
 
-/All times are in nanoseconds. Kittens and scalaz-deriving were used to derive Eq instances./
+/All times are in nanoseconds. [[https://github.com/milessabin/kittens][Kittens]] and [[https://gitlab.com/fommil/scalaz-deriving/][scalaz-deriving]] were used to derive Eq instances./
 
 - ~scalaz-deriving v0.9.1-SNAPSHOT~
 - ~kittens 1.0.0-RC1~
@@ -172,9 +172,9 @@ As of this writing (2017 November), ScalaZ 8 is still under development but prom
 significant performance improvements for their ~IO~ Monad. The benchmarks above
 will have to be reran when it is released.
 
-** The API
+** Usage Considerations
 
-*** Accessibility
+*** API Accessibility
 
 Up front, Cats has much more documentation and usage examples. Their website is
 good for this. However, given that they both have blog posts and books written about
@@ -201,6 +201,66 @@ If you're willing to do that, then the import experience for both libraries
 is the same.
 
 *** Features
+*** Typeclasses
+
+Typeclasses are a powerful programming construct to relate data types that have
+common behaviour. They describe /how/ a type should behave, as opposed to what
+a data type /is/ (re: Object Oriented programming).
+
+Both ScalaZ and Cats provide the "standard" typeclasses, namely ~Monoid~, ~Functor~,
+~Applicative~, and ~Monad~, as well as a wealth of others for more specialized work.
+In general, the ScalaZ typeclass hierarchy is larger than the Cats' one.
+
+**** Custom Typeclasses
+
+Scala doesn't yet have first-class support for typeclasses. While it's very possible
+to create trait/object structures that represent a typeclass, there is no built-in
+syntax for it. The library [[https://github.com/mpilquist/simulacrum][simulacrum]] helps significantly with this:
+
+#+BEGIN_SRC scala
+  package mylib
+
+  import simulacrum._
+
+  @typeclass trait Semigroup[A] {
+    @op("<>") def combine(x: A, y: A): A
+  }
+#+END_SRC
+
+This /significantly/ reduces boilerplate. At compile time, this tiny definition
+is expanded into everything necessary to use ~.combine~ (or its optional operator ~<>~!)
+as an injected method on your ~A~ type. Here's how to write an instance:
+
+#+BEGIN_SRC scala
+  case class Pair(n: Int, m: Int)
+
+  object Pair {
+    implicit val pairSemi: Semigroup[Pair] = new Semigroup[Pair] {
+      def combine(x: Pair, y: Pair): Pair = Pair(x.n + y.n, x.m + y.m)
+    }
+  }
+#+END_SRC
+
+This way, whenever ~Pair~ is in scope, its ~Semigroup~ instance will also be
+automatically visible. Defining the ~Semigroup[Pair]~ somewhere else makes it
+an /Orphan Instance/, which runs the risk of burdening your users with
+confusing imports.
+
+Now extend some top-level package object of yours like:
+
+#+BEGIN_SRC scala
+  package object mylib extends Semigroup.ToSemigroupOps
+#+END_SRC
+
+And then full use of your typeclass is just one import away!
+#+BEGIN_SRC scala
+  import mylib._
+
+  scala> Pair(1, 2) <> Pair(3, 4)
+  res0: Pair = Pair(4, 6)
+#+END_SRC
+
+**** Instance Derivation
 
 *** Monads and Monadic Recursion
 
