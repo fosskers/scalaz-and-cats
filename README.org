@@ -201,6 +201,67 @@ If you're willing to do that, then the import experience for both libraries
 is the same.
 
 *** Features
+
+**** ScalaZ: ~IList~
+
+From its Scaladocs:
+
+#+BEGIN_QUOTE
+Safe, invariant alternative to stdlib ~List~. Most methods on ~List~ have a sensible
+equivalent here, either on the ~IList~ interface itself or via typeclass instances
+(which are the same as those defined for stdlib ~List~). All methods are total and stack-safe.
+#+END_QUOTE
+
+Between being invariant and avoiding connection to Scala's enormous Collections API,
+~IList~ manages to be the fastest general-purpose Scala container type to iterate over.
+Specifically, it handles tail-recursive algorithms with pattern matching
+(thus mimicking ~.map~ and ~.foldLeft~) twice as fast as vanilla ~List~.
+Only an ~Array~ of ~Int~ or ~Double~ via a ~while~ loop can iterate faster.
+
+**** ScalaZ: ~Maybe~
+
+From its Scaladocs:
+
+#+BEGIN_QUOTE
+~Maybe[A]~ is isomorphic to ~Option[A]~, however there are some differences between the two.
+~Maybe~ is invariant in ~A~ while ~Option~ is covariant. ~Maybe[A]~ does not expose an unsafe
+get operation to access the underlying ~A~ value (that may not exist) like ~Option[A]~ does.
+~Maybe[A]~ does not come with an implicit conversion to ~Iterable[A]~ (a trait with over
+a dozen super types).
+#+END_QUOTE
+
+The implication is that ~Maybe~ should be safer and slightly more performant than ~Option~.
+Ironically, many ScalaZ methods that yield an "optional" value use ~Option~ and not ~Maybe~.
+
+Where Monad Transformers and concerned, ScalaZ provides both ~MaybeT~ and ~OptionT~.
+
+**** ScalaZ: ~EphemeralStream~
+
+From its Scaladocs:
+
+#+BEGIN_QUOTE
+Like ~scala.collection.immutable.Stream~, but doesn't save computed values. As such,
+it can be used to represent similar things, but without the space leak problem
+frequently encountered using that type.
+#+END_QUOTE
+
+The dream of lazy Haskell lists realized? Maybe. With ~EphemeralStream~ (or ~EStream~
+as the cool kids call it), even the "head" value is lazy. So one would use ~EStream~
+when there's no guarantee that even the first value might be used.
+
+How does it perform?
+
+/All times are in microseconds./
+
+| Benchmark      | List | IList | Vector | Array |         Stream | EphemeralStream | Iterator |
+|----------------+------+-------+--------+-------+----------------+-----------------+----------|
+| ~foldLeft~     | 33.3 |  31.3 |   68.9 |  56.4 |           56.9 | 163.1           |     55.4 |
+| ~foldRight~    | 69.2 |  89.5 | 228.39 |  55.1 | Stack Overflow | Stack Overflow  |    147.6 |
+| Tail Recursion | 45.9 |  24.1 |        |       |           69.8 |                 |          |
+
+We see similar slowdowns for chained higher-order ops as well. Looks like building in
+the laziness has its cost.
+
 *** Typeclasses
 
 Typeclasses are a powerful programming construct to relate data types that have
@@ -307,7 +368,7 @@ already possible:
   case class User(age: Int, name: String)
 #+END_SRC
 
-*** Monads and Monadic Recursion
+*** Monadic Recursion
 
 If you're not careful, Monadic Recursion with ScalaZ can blow the JVM stack.
 For instance, the following will "just work" with Cats:
