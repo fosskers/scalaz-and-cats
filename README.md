@@ -1,5 +1,15 @@
 # ScalaZ and Cats
 
+ScalaZ and Cats are libraries which provide Functional Programming constructs for Scala (i.e. `Monad` n' friends).
+
+This repository is a comparison of these two libraries by someone who isn't predisposed to either one. If you're a contributor to either library and notice a discrepancy here, please let me know!
+
+We seek to answer the following question:
+
+> Should I use ScalaZ or Cats?
+
+The answer is, of course, "it depends". What's your use-case?
+
   - [Use Cases](#sec-1)
     - [I want to train my Scala team in Functional Programming fundamentals](#sec-1-1)
     - [I'm writing a performance-sensitive application](#sec-1-2)
@@ -32,16 +42,6 @@
     - [Resources](#sec-4-3)
       - [ScalaZ](#sec-4-3-1)
       - [Cats](#sec-4-3-2)
-
-ScalaZ and Cats are libraries which provide Functional Programming constructs for Scala (i.e. `Monad` n' friends).
-
-This repository is a comparison of these two libraries by someone who isn't predisposed to either one. If you're a contributor to either library and notice a discrepancy here, please let me know!
-
-We seek to answer the following question:
-
-> Should I use ScalaZ or Cats?
-
-The answer is, of course, "it depends". What's your use-case?
 
 # Use Cases<a id="sec-1"></a>
 
