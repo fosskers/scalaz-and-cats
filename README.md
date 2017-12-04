@@ -1,3 +1,5 @@
+# ScalaZ and Cats
+
   - [Use Cases](#sec-1)
     - [I want to train my Scala team in Functional Programming fundamentals](#sec-1-1)
     - [I'm writing a performance-sensitive application](#sec-1-2)
