@@ -21,11 +21,12 @@ The answer is, of course, "it depends". What's your use-case?
 
 *** I want to train my Scala team in Functional Programming fundamentals
 
-Both ScalaZ and Cats have books and professional training available.
+[[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]], a book by Runar Bjarnson and Paul Chiusano, is a valuable
+book for learning about Functional Programming in general. Both ScalaZ and Cats also have
+specific books and professional training available.
 
 ScalaZ:
 
-- [[https://www.manning.com/books/functional-programming-in-scala][Functional Programming in Scala]] by the ScalaZ authors (for Scala beginners)
 - [[https://leanpub.com/fpmortals][Functional Programming for Mortals]] by Sam Halliday (for FP beginners - assumes an OO Scala background)
 - Training by the [[http://fantasyland.institute/][Fantasyland Institute]]
 
