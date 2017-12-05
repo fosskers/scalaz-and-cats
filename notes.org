@@ -125,35 +125,6 @@ Vanilla Scala and Haskell results are also included where applicable.
 | ~IO~ - recurse 10000                    | 1,183,352     |               | 503,889        |               | 9,095         |
 | ~IO~ - recurse 100000                   | 11,671,581    |               | 5,167,355      |               | 89,860        |
 
-/Note:/ For the ~Eq~ typeclass, at least in these benchmarks, ScalaZ consistently
-suffered from a strange JVM deoptimization:
-
-#+BEGIN_QUOTE
-Warmup Iteration   1: 8967.747 ns/op
-
-Warmup Iteration   2: 15492.176 ns/op
-
-Warmup Iteration   3: 78857.592 ns/op
-
-Warmup Iteration   4: 78532.147 ns/op
-
-Warmup Iteration   5: 78953.201 ns/op
-
-Iteration   1: 79065.639 ns/op
-
-Iteration   2: 78860.625 ns/op
-
-Iteration   3: 80211.784 ns/op
-
-Iteration   4: 78723.984 ns/op
-
-Iteration   5: 79408.957 ns/op
-#+END_QUOTE
-
-This occurred for both the "same list" and "different list" benchmarks. Were it not for
-the deoptimization, ~Eq~ would perform at least within the same order of magnitude
-as Cats and Vanilla Scala. I have no idea what triggers the deopt.
-
 *** Observations
 
 - *Cats' type-safe equality checking is faster than Vanilla Scala.* So, there seems
