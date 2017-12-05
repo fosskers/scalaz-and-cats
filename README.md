@@ -47,7 +47,7 @@ The answer is, of course, "it depends". What's your use-case?
 
 ## I want to train my Scala team in Functional Programming fundamentals<a id="sec-1-1"></a>
 
-[Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala), a book by Runar Bjarnson and Paul Chiusano, is a valuable book for learning about Functional Programming in general. Both ScalaZ and Cats also have specific books and professional training available.
+[Functional Programming in Scala](https://www.manning.com/books/functional-programming-in-scala), a book by Runar Bjarnson and Paul Chiusano, is a valuable book for learning about Functional Programming in general. Otherwise, both ScalaZ and Cats have specific books and professional training available.
 
 ScalaZ:
 
