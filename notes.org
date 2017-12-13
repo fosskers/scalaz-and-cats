@@ -2,6 +2,8 @@
 #+AUTHOR: Colin
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/colin/code/org-theme.css"/>
 
+** Preface
+
 ScalaZ and Cats are libraries which provide Functional Programming constructs
 for Scala (i.e. ~Monad~ n' friends).
 
@@ -87,6 +89,40 @@ for that if IO is a great concern to you.
 *** Just gimme Monads
 
 Then either is fine, you can flip a coin.
+
+*** I'm interested in other FP options on the JVM
+
+If you're not already entrenched in Scala, then you're in luck.
+[[http://eta-lang.org/][Eta]] is a Haskell dialect that targets the JVM. It can access a large
+portion of the existing Haskell library ecosystem, and also has a [[http://eta-lang.org/docs/html/eta-tutorials.html#interacting-with-java][Java FFI]]
+that handles the possibility of ~null~ more explicitely than Scala.
+
+An example:
+
+#+BEGIN_SRC haskell
+  -- | Type-safe import of a Java method that is null-safe.
+  foreign import java unsafe "@static java.lang.System.getenv"
+    getEnv :: String -> IO (Maybe String)
+
+  -- | Checks the environment for the HOME environment
+  -- variable and prints it out if it exists.
+  main :: IO ()
+  main = do
+    home <- getEnv "HOME"
+    case home of
+      Just homePath ->
+        putStrLn $ "Your home directory is " ++ homePath ++ "!"
+      Nothing ->
+        putStrLn "Your HOME environment variable is not set"
+#+END_SRC
+
+Things like typeclasses and the ~IO~ Monad are first-class concepts, so no extra
+library like ScalaZ or Cats is necessary. Eta supports unsigned integer types (called ~Word~
+in Eta/Haskell and sometimes ~uint~ elsewhere) which neither Java nor Scala have natively.
+[[https://github.com/Jyothsnasrinivas/eta-spark-core][Eta also has bindings to Apache Spark.]]
+
+If you're already in Scala-land but want to integrate Eta or gradually migrate
+to it, [[https://blog.eta-lang.org/integrating-eta-into-your-scala-projects-a8d494a2c5b0][there exists an sbt plugin for Eta<->Scala integration.]]
 
 ** Benchmarks
 
