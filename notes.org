@@ -503,7 +503,7 @@ instance, and vice versa.
   )
 #+END_SRC
 
-*** Resources
+** Resources
 
 The tendency is for Cats to have better documentation and examples up-front, while
 ScalaZ has an extensive ~examples~ subpackage.
@@ -524,3 +524,7 @@ ScalaZ has an extensive ~examples~ subpackage.
 - [[https://typelevel.org/cats/api/][Scaladocs]]
 - [[http://eed3si9n.com/herding-cats/][Herding Cats]] by Eugene Yokota (blog series)
 - [[https://gitter.im/typelevel/cats][Cats Gitter]]
+**** Heretical Materials
+
+- [[https://adelbertc.github.io/publications/typeclasses-scala17.pdf][The Limitations of Type Classes as Subtyped Implicits]] by Adelbert Chang
+- [[http://eta-lang.org/][The Eta Language]]

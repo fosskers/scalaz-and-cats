@@ -32,9 +32,10 @@
     - [Project Pulses](#sec-5-1)
     - [Sub-libraries](#sec-5-2)
       - [Shims](#sec-5-2-1)
-    - [Resources](#sec-5-3)
-      - [ScalaZ](#sec-5-3-1)
-      - [Cats](#sec-5-3-2)
+  - [Resources](#sec-6)
+      - [ScalaZ](#sec-6-0-1)
+      - [Cats](#sec-6-0-2)
+      - [Heretical Materials](#sec-6-0-3)
 
 
 # Preface<a id="sec-1"></a>
@@ -433,11 +434,11 @@ object Shimmy extends CommandApp(
 )
 ```
 
-## Resources<a id="sec-5-3"></a>
+# Resources<a id="sec-6"></a>
 
 The tendency is for Cats to have better documentation and examples up-front, while ScalaZ has an extensive `examples` subpackage.
 
-### ScalaZ<a id="sec-5-3-1"></a>
+### ScalaZ<a id="sec-6-0-1"></a>
 
 -   [Functional Programming for Mortals](https://leanpub.com/fpmortals) by Sam Halliday (book)
 -   [Learning ScalaZ](http://eed3si9n.com/learning-scalaz/index.html) by Eugene Yokota (blog series)
@@ -446,10 +447,15 @@ The tendency is for Cats to have better documentation and examples up-front, whi
 -   [Scaladocs](https://scalaz.github.io/scalaz/#scaladoc)
 -   [ScalaZ Gitter](https://gitter.im/scalaz/scalaz)
 
-### Cats<a id="sec-5-3-2"></a>
+### Cats<a id="sec-6-0-2"></a>
 
 -   [Cats Website](https://typelevel.org/cats/)
 -   [Scala with Cats](https://underscore.io/books/scala-with-cats/) by Noel Walsh and Dave Gurnell (book)
 -   [Scaladocs](https://typelevel.org/cats/api/)
 -   [Herding Cats](http://eed3si9n.com/herding-cats/) by Eugene Yokota (blog series)
 -   [Cats Gitter](https://gitter.im/typelevel/cats)
+
+### Heretical Materials<a id="sec-6-0-3"></a>
+
+-   [The Limitations of Type Classes as Subtyped Implicits](https://adelbertc.github.io/publications/typeclasses-scala17.pdf) by Adelbert Chang
+-   [The Eta Language](http://eta-lang.org/)
