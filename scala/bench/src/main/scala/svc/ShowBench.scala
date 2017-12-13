@@ -12,13 +12,13 @@ import scalaz.Scalaz._
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Thread)
 class ShowBench {
-  var list: List[Int] = _
+  var list: List[String] = _
   var str: String = _
 
   @Setup
   def setup(): Unit = {
-    list = List.range(1, 1000)
-    str = "How fast is this"
+    list = List.range(1, 1000).map(_.toString)
+    str = "How fast is this" * 1000
   }
 
   /* Render a large List into a single String */
@@ -36,5 +36,9 @@ class ShowBench {
   def showStrCats: String = Kitties.show(str)
   @Benchmark
   def showStrScalaz: String = Zed.show(str)
+  @Benchmark
+  def showCordStrScalaz: scalaz.Cord = Zed.showCord(str)
+  @Benchmark
+  def showCordStringStrScalaz: String = Zed.showCord(str).toString
 
 }

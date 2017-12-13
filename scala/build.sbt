@@ -15,6 +15,7 @@ val common = Seq(
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+  addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4"),
 
   libraryDependencies ++= Seq(
     "com.fommil"    %% "deriving-macro"  % "0.9.1-SNAPSHOT",

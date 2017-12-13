@@ -53,6 +53,7 @@ object Zed {
     * All the standard types have `Show` instances defined for them already.
     */
   def show[A: Show](a: A): String = a.shows
+  def showCord[A: Show](a: A): Cord = a.show
 
   def showOpt: String = some(5).shows
 
