@@ -376,6 +376,15 @@ already possible:
   case class User(age: Int, name: String)
 #+END_SRC
 
+**** Caveat
+
+With the current form of the Scala language and compiler, typeclasses have limitations
+in both performance and correctness.
+The details are described in the recent paper [[https://adelbertc.github.io/publications/typeclasses-scala17.pdf][The Limitations of Type Classes as Subtyped Implicits]],
+by Adelbert Chang.
+
+If this concerns you, there are [[http://eta-lang.org/][safer options]] for FP on the JVM.
+
 *** Monadic Recursion
 
 If you're not careful, Monadic Recursion with ScalaZ can blow the JVM stack.
