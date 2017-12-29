@@ -18,7 +18,7 @@ class ShowBench {
   @Setup
   def setup(): Unit = {
     list = List.range(1, 1000)
-    str = "How fast is this"
+    str = "How fast is this" * 1000
   }
 
   /* Render a large List into a single String */

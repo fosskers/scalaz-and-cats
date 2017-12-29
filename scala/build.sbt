@@ -19,11 +19,11 @@ val common = Seq(
   libraryDependencies ++= Seq(
     "com.fommil"    %% "deriving-macro"  % "0.9.1-SNAPSHOT",
     "com.fommil"    %% "scalaz-deriving" % "0.9.1-SNAPSHOT",
-    "org.typelevel" %% "cats-core"       % "1.0.0-RC1",
-    "org.typelevel" %% "cats-effect"     % "0.5",
+    "org.typelevel" %% "cats-core"       % "1.0.0",
+    "org.typelevel" %% "cats-effect"     % "0.7",
     "org.typelevel" %% "kittens"         % "1.0.0-RC1",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.17",
-    "org.scalaz"    %% "scalaz-effect"   % "7.2.17"
+    "org.scalaz"    %% "scalaz-core"     % "7.2.18",
+    "org.scalaz"    %% "scalaz-effect"   % "7.2.18"
   )
 )
 

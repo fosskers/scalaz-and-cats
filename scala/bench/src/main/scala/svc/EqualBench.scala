@@ -73,7 +73,6 @@ class EqualBench {
     res
   }
 
-  /*
   @Benchmark
   def equalSameIntVanilla: Boolean = list0 == list0
   @Benchmark
@@ -99,7 +98,6 @@ class EqualBench {
   def equalWhileIntCats: Boolean = Kitties.equalWhileInt(arr0)
   @Benchmark
   def equalWhileClassCats: Boolean = Kitties.equalWhileClass(arrK)
-   */
 
   @Benchmark
   def equalSameIntScalaz: Boolean = Zed.equalAll(listz1, listz1)
