@@ -7,12 +7,13 @@
     - [I want to improve quality-of-life for my Scala devs](#sec-2-3)
     - [I'm writing a library/application that works with a complex DSL](#sec-2-4)
     - [I want to port a well-known, general-purpose Haskell library to Scala](#sec-2-5)
-    - [I care about which stays truer to Haskell](#sec-2-6)
-    - [I care about which has more industry backing](#sec-2-7)
-    - [I hear the `IO` Monad can help me logically organize my code](#sec-2-8)
-    - [Futures suck and I hate JVM thread pools. Help?](#sec-2-9)
-    - [Just gimme Monads](#sec-2-10)
-    - [I'm interested in other FP options on the JVM](#sec-2-11)
+    - [I care about licensing](#sec-2-6)
+    - [I care about which stays truer to Haskell](#sec-2-7)
+    - [I care about which has more industry backing](#sec-2-8)
+    - [I hear the `IO` Monad can help me logically organize my code](#sec-2-9)
+    - [Futures suck and I hate JVM thread pools. Help?](#sec-2-10)
+    - [Just gimme Monads](#sec-2-11)
+    - [I'm interested in other FP options on the JVM](#sec-2-12)
   - [Benchmarks](#sec-3)
     - [Results](#sec-3-1)
     - [Observations](#sec-3-2)
@@ -72,7 +73,7 @@ Lean toward Cats, it tends to be faster in aggregate. Are you using a database? 
 
 ## I want to improve quality-of-life for my Scala devs<a id="sec-2-3"></a>
 
-Any dedicated application of FP concepts will help you organize and simplify your code. Libaries like [simulacrum](https://github.com/mpilquist/simulacrum), [decline](https://github.com/bkirwi/decline) and [circe](https://github.com/circe/circe) can provide immediate wins by drastically cutting down boilerplate. The latter two can be used natively with Cats, or via ScalaZ with the [shims](https://github.com/djspiewak/shims) library.
+Any dedicated application of FP concepts will help you organize and simplify your code. Libraries like [simulacrum](https://github.com/mpilquist/simulacrum), [decline](https://github.com/bkirwi/decline) and [circe](https://github.com/circe/circe) can provide immediate wins by drastically cutting down boilerplate. The latter two can be used natively with Cats, or via ScalaZ with the [shims](https://github.com/djspiewak/shims) library.
 
 ## I'm writing a library/application that works with a complex DSL<a id="sec-2-4"></a>
 
@@ -82,29 +83,33 @@ You probably need Recursion Schemes, which are supplied by the [Matryoshka](http
 
 You'd be a champ to write a backend for both ScalaZ and Cats, but know that Cats has a head start and has a nice set of ported libraries already.
 
-## I care about which stays truer to Haskell<a id="sec-2-6"></a>
+## I care about licensing<a id="sec-2-6"></a>
+
+ScalaZ is BSD3, while Cats is MIT + BSD3, since it derived from ScalaZ originally.
+
+## I care about which stays truer to Haskell<a id="sec-2-7"></a>
 
 ScalaZ does. Its core has a larger API, provides more features up-front, and tends to keep Haskell function names and operators (e.g. `<*>`).
 
-## I care about which has more industry backing<a id="sec-2-7"></a>
+## I care about which has more industry backing<a id="sec-2-8"></a>
 
 [According to this survey](https://www.jetbrains.com/research/devecosystem-2017/scala/), ScalaZ does.
 
-## I hear the `IO` Monad can help me logically organize my code<a id="sec-2-8"></a>
+## I hear the `IO` Monad can help me logically organize my code<a id="sec-2-9"></a>
 
 Both ScalaZ 7 and Cats have a `effects` subpackage which provides an `IO` type. They both help you contain "real world" side-effects into smaller areas of your code base, freeing the rest of it to purity ([referential transparency](https://en.wikipedia.org/wiki/Referential_transparency)). They also help you wrangle IO-based Exceptions.
 
 Cats' `IO` is currently faster in aggregate. However, an overhaul of `scalaz-effects` with many orders of magnitude of improvement in performance is promised [for ScalaZ 8](http://degoes.net/articles/scalaz8-is-the-future), so you may want to wait for that if IO is a great concern to you.
 
-## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-9"></a>
+## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-10"></a>
 
 [Wait for ScalaZ 8.](http://degoes.net/articles/scalaz8-is-the-future)
 
-## Just gimme Monads<a id="sec-2-10"></a>
+## Just gimme Monads<a id="sec-2-11"></a>
 
 Then either is fine, you can flip a coin.
 
-## I'm interested in other FP options on the JVM<a id="sec-2-11"></a>
+## I'm interested in other FP options on the JVM<a id="sec-2-12"></a>
 
 If you're not already entrenched in Scala, then you're in luck. [Eta](http://eta-lang.org/) is a Haskell dialect that targets the JVM. It can access a large portion of the existing Haskell library ecosystem, and also has a [Java FFI](http://eta-lang.org/docs/html/eta-tutorials.html#interacting-with-java) that handles the possibility of `null` more explicitely than Scala.
 
@@ -142,36 +147,40 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 -   `scalaz-deriving v0.9.1-SNAPSHOT`
 -   `kittens 1.0.0-RC1`
 
-| Benchmark                               | ScalaZ 7.2.16 | ScalaZ 7.2.17 | Cats 1.0.0-RC1 | Vanilla Scala | Haskell 8.0.2 |
-|--------------------------------------- |------------- |------------- |-------------- |------------- |------------- |
-| `Eq` - same `[Int]`                     | 78,653        | **11.5**      | 2.5            | 2.4           | 3,974         |
-| `Eq` - different `[Int]`                | 80,508        | **5,753**     | 3,983          | 5,180         |               |
-| `Eq` - `while` w/ `Int`                 | 3,226         | 3,223         | 199            | 198           |               |
-| `Eq` (derived) - same `[Foo]`           | 79,150        | **10.2**      | 2.8            | 2.5           |               |
-| `Eq` (derived) - different `[Foo]`      | 80,737        | **2,945**     | 38,630         | 2,071         |               |
-| `Eq` (derived) - `while` w/ `Foo`       | 470,323       | 463,595       | 40,113         | 5,335         |               |
-| `Eq` (hand-written) - same `[Foo]`      | 26,673        | **10.1**      | 2.8            | 2.5           |               |
-| `Eq` (hand-written) - different `[Foo]` | 26,638        | **2,962**     | 7,835          | 2,071         |               |
-| `Eq` (hand-written) - `while` w/ `Foo`  | 10,771        | **3,156**     | 5,341          | 5,335         |               |
-| `Show` - `[Int]`                        | 1,000,757     |               | 43,633         | 41,079        | 46,540        |
-| `Show` - `String`                       | 216.6         |               | 3.2            | 2.8           | 199.4         |
-| `Foldable.fold` on `[Int]`              | 3,355         |               | 5,026          | 7,939         | 3,330         |
-| `Foldable.fold` on `[Maybe Int]`        | 10,740        |               | 12,506         |               | 15,440        |
-| `State` - `get`                         | 17.9          |               | 33.3           |               | 4.1           |
-| `State` - `>>=`                         | 90            |               | 139.1          |               | 10.43         |
-| `State` - `flatMap`                     | 63.9          |               | 133.3          |               |               |
-| `State` - countdown                     | 4,259,320     |               | 2,071,480      |               | 6,069         |
-| `StateT` - countdown                    |               |               | 4,572,499      |               | 24,070        |
-| `Applicative` - sum `(<*>)`             | 31,709        |               | 32,132         |               | 22,140        |
-| `Applicative` - sum (cartesian)         | 50,431        |               | 33,638         |               |               |
-| `IO` - recurse 1000                     | 117,569       |               | 48,558         |               | 907.7         |
-| `IO` - recurse 10000                    | 1,183,352     |               | 503,889        |               | 9,095         |
-| `IO` - recurse 100000                   | 11,671,581    |               | 5,167,355      |               | 89,860        |
+| Benchmark                               | ScalaZ 7.2.18 | Cats 1.0.0 | Vanilla Scala | Haskell 8.0.2 |
+|--------------------------------------- |------------- |---------- |------------- |------------- |
+| `Eq` - same `[Int]`                     | 11.7\*        | 2.5        | 2.4           | 3,974         |
+| `Eq` - different `[Int]`                | 5,792         | 3,983      | 5,180         |               |
+| `Eq` - `while` w/ `Int`                 | 3,311         | 199        | 198           |               |
+| `Eq` (derived) - same `[Foo]`           | 10.4          | 2.8        | 2.5           |               |
+| `Eq` (derived) - different `[Foo]`      | 2,941         | 38,630     | 2,071         |               |
+| `Eq` (derived) - `while` w/ `Foo`       | 463,595       | 40,113     | 5,335         |               |
+| `Eq` (hand-written) - same `[Foo]`      | 10.1          | 2.8        | 2.5           |               |
+| `Eq` (hand-written) - different `[Foo]` | 2,962         | 7,835      | 2,071         |               |
+| `Eq` (hand-written) - `while` w/ `Foo`  | 3,156         | 5,341      | 5,335         |               |
+| `Show` - `[Int]`                        | 537,153       | 43,633     | 41,079        | 46,540        |
+| `Show` - `String`                       | 2,841\*       | 3.2        | 2.8           | 199.4         |
+| `Foldable.fold` on `[Int]`              | 3,448         | 5,026      | 7,939         | 3,330         |
+| `Foldable.fold` on `[Maybe Int]`        | 6,430         | 12,506     |               | 15,440        |
+| `State` - `get`                         | 18.6          | 33.3       |               | 4.1           |
+| `State` - `>>=`                         | 90.1          | 139.1      |               | 10.43         |
+| `State` - `flatMap`                     | 80            | 133.3      |               |               |
+| `State` - countdown                     |               | 8,753,951  |               | 6,069         |
+| `StateT` - countdown                    | 4,387,924     | 8,920,953  |               | 24,070        |
+| `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
+| `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
+| `IO` - recurse 1000                     | 107,348       | 12,373     |               | 907.7         |
+| `IO` - recurse 10000                    | 1,073,504     | 129,382    |               | 9,095         |
+| `IO` - recurse 100000                   | 10,857,257    | 1,260,103  |               | 89,860        |
+
+*Notes:*
+
+-   `Eq` benchmarks for ScalaZ employ its `IList` type, not vanilla `List`
+-   `Show` for ScalaZ and Cats behaves differently. ScalaZ's prefixes and affixes quotation marks, so that Strings can be copy-pasted between editor and REPL. This is what Haskell's `Show` does as well. Cats does not do this, so it can "return early" in the case of `String`.
 
 ## Observations<a id="sec-3-2"></a>
 
--   **Cats' type-safe equality checking is faster than Vanilla Scala.** So, there seems to be no reason not to use Cats' `===` in all cases.
--   **Cats' type-safe String rendering via Show is as fast as Vanilla toString.** So `.toString` should be avoided.
+-   **Type-safe equality checking is on-par or faster than Vanilla Scala.** So, there seems to be no reason not to use `Eq.===` in all cases.
 -   At the small scale (i.e. a single `>>=`), ScalaZ tends to be faster.
 -   At aggregate scale, Cats tends to be faster.
 -   Neither library performs well on recursive Monadic operations. Haskell is two to three orders of magnitude faster in this regard. In particular, GHC heavily optimizes both `IO` and `State` operations.

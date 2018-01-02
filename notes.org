@@ -60,6 +60,10 @@ You'd be a champ to write a backend for both ScalaZ and Cats, but
 know that Cats has a head start and has a nice set of ported libraries
 already.
 
+*** I care about licensing
+
+ScalaZ is BSD3, while Cats is MIT + BSD3, since it derived from ScalaZ originally.
+
 *** I care about which stays truer to Haskell
 
 ScalaZ does. Its core has a larger API, provides more features up-front,
