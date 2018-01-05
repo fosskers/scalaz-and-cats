@@ -12,6 +12,15 @@ import TextShow
 
 ---
 
+nums :: [Int]
+nums = [1 .. 1000]
+
+str :: String
+str = mconcat $ replicate 1000 "How fast is this"
+
+tstr :: Text
+tstr = mconcat $ replicate 1000 "How fast is this"
+
 main :: IO ()
 main = defaultMain
   [ bgroup "Eq"
@@ -19,15 +28,17 @@ main = defaultMain
     ]
   , bgroup "Show"
     [ bench "show - list" $ nf show nums
-    , bench "show - string" $ nf show "How fast is this"
+    , bench "show - string" $ nf show str
+    , bench "show - text" $ nf show tstr
+    ]
+  , bgroup "TextShow"
+    [ bench "showt - list" $ nf showt nums
+    , bench "showt - text" $ nf showt tstr
+    , bench "manual" $ nf (\s -> "\"" <> s <> "\"") tstr
     ]
   , bgroup "Monoid"
     [ bench "fold - [Sum Int]" $ nf fold (map Sum nums)
     , bench "fold - [Maybe (Sum Int)]" $ nf fold (map (Just . Sum) nums)
-    ]
-  , bgroup "TextShow"
-    [ bench "showt - list" $ nf showt nums
-    , bench "showt - text" $ nf showt ("How fast is this" :: Text)
     ]
   , bgroup "State"
     [ bench "oneGet" $ nf (runState get) (1 :: Int)
@@ -44,4 +55,3 @@ main = defaultMain
     , bench "recurseIO 100000" $ nfIO (recurseIO 100000)
     ]
   ]
-  where nums = [1..1000] :: [Int]

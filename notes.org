@@ -140,7 +140,7 @@ Vanilla Scala and Haskell results are also included where applicable.
 - ~scalaz-deriving v0.9.1-SNAPSHOT~
 - ~kittens 1.0.0-RC1~
 
-| Benchmark                               | ScalaZ 7.2.18 | Cats 1.0.0 | Vanilla Scala | Haskell 8.0.2 |
+| Benchmark                               | ScalaZ 7.2.18 | Cats 1.0.0 | Vanilla Scala | Haskell 8.2.2 |
 |-----------------------------------------+---------------+------------+---------------+---------------|
 | ~Eq~ - same ~[Int]~                     | 11.7*         | 2.5        | 2.4           | 3,974         |
 | ~Eq~ - different ~[Int]~                | 5,792         | 3,983      | 5,180         |               |
@@ -151,20 +151,20 @@ Vanilla Scala and Haskell results are also included where applicable.
 | ~Eq~ (hand-written) - same ~[Foo]~      | 10.1          | 2.8        | 2.5           |               |
 | ~Eq~ (hand-written) - different ~[Foo]~ | 2,962         | 7,835      | 2,071         |               |
 | ~Eq~ (hand-written) - ~while~ w/ ~Foo~  | 3,156         | 5,341      | 5,335         |               |
-| ~Show~ - ~[Int]~                        | 537,153       | 43,633     | 41,079        | 46,540        |
-| ~Show~ - ~String~                       | 2,841*        | 3.2        | 2.8           | 199.4         |
+| ~Show~ - ~[Int]~                        | 537,153       | 43,633     | 41,079        | 38,190        |
+| ~Show~ - ~String~                       | 2,841*        | 3.2        | 2.8           | 140,000       |
 | ~Foldable.fold~ on ~[Int]~              | 3,448         | 5,026      | 7,939         | 3,330         |
-| ~Foldable.fold~ on ~[Maybe Int]~        | 6,430         | 12,506     |               | 15,440        |
-| ~State~ - ~get~                         | 18.6          | 33.3       |               | 4.1           |
+| ~Foldable.fold~ on ~[Maybe Int]~        | 6,430         | 12,506     |               | 14,260        |
+| ~State~ - ~get~                         | 18.6          | 33.3       |               | 3.9           |
 | ~State~ - ~>>=~                         | 90.1          | 139.1      |               | 10.43         |
 | ~State~ - ~flatMap~                     | 80            | 133.3      |               |               |
 | ~State~ - countdown                     |               | 8,753,951  |               | 6,069         |
-| ~StateT~ - countdown                    | 4,387,924     | 8,920,953  |               | 24,070        |
+| ~StateT~ - countdown                    | 4,387,924     | 8,920,953  |               | 15.4          |
 | ~Applicative~ - sum ~(<*>)~             | 31,429        | 32,132     |               | 22,140        |
 | ~Applicative~ - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| ~IO~ - recurse 1000                     | 107,348       | 12,373     |               | 907.7         |
-| ~IO~ - recurse 10000                    | 1,073,504     | 129,382    |               | 9,095         |
-| ~IO~ - recurse 100000                   | 10,857,257    | 1,260,103  |               | 89,860        |
+| ~IO~ - recurse 1000                     | 107,348       | 12,373     |               | 616.8         |
+| ~IO~ - recurse 10000                    | 1,073,504     | 129,382    |               | 6,021         |
+| ~IO~ - recurse 100000                   | 10,857,257    | 1,260,103  |               | 59,670        |
 
 /Notes:/
 
