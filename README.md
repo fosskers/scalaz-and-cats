@@ -387,7 +387,7 @@ So ScalaZ chooses lawfulness over convenience in this case.
 
 ## Project Pulses<a id="sec-5-1"></a>
 
-As of 2018 January 4.
+As of 2018 January 4, ScalaZ's last major release was in December 2015, and Cats had its first major release in December 2017.
 
 | Project | Releases | Watchers | Stars | Forks | Commits | Prev. Month Commits | ScalaJS | Scala Native |
 |------- |-------- |-------- |----- |----- |------- |------------------- |------- |------------ |
