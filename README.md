@@ -387,12 +387,12 @@ So ScalaZ chooses lawfulness over convenience in this case.
 
 ## Project Pulses<a id="sec-5-1"></a>
 
-As of 2017 November 6.
+As of 2018 January 4.
 
 | Project | Releases | Watchers | Stars | Forks | Commits | Prev. Month Commits | ScalaJS | Scala Native |
 |------- |-------- |-------- |----- |----- |------- |------------------- |------- |------------ |
-| ScalaZ  | 106      | 257      | 3312  | 534   | 6101    | 45                  | Yes     | Yes          |
-| Cats    | 22       | 174      | 2118  | 493   | 3280    | 51                  | Yes     | **No**       |
+| ScalaZ  | 109      | 253      | 3519  | 536   | 6157    | 42                  | Yes     | Yes          |
+| Cats    | 25       | 185      | 2246  | 559   | 3378    | 57                  | Yes     | **No**       |
 
 ScalaZ's numbers are higher, but that's to be expected as it's an older project. Otherwise the projects seem to be about equally active. Notably missing is the lack of Scala Native support in Cats.
 
