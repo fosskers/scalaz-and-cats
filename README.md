@@ -144,29 +144,29 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 
 *All times are in nanoseconds. [Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
 
--   `scalaz-deriving v0.9.1-SNAPSHOT`
--   `kittens 1.0.0-RC1`
+-   `scalaz-deriving v0.13.0`
+-   `kittens 1.0.0-RC3`
 
-| Benchmark                               | ScalaZ 7.2.18 | Cats 1.0.0 | Vanilla Scala | Haskell 8.2.2 |
+| Benchmark                               | ScalaZ 7.2.20 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
 |--------------------------------------- |------------- |---------- |------------- |------------- |
-| `Eq` - same `[Int]`                     | 11.7\*        | 2.5        | 2.4           | 3,974         |
+| `Eq` - same `[Int]`                     | 10.4\*        | 2.5        | 2.4           | 3,974         |
 | `Eq` - different `[Int]`                | 5,792         | 3,983      | 5,180         |               |
-| `Eq` - `while` w/ `Int`                 | 3,311         | 199        | 198           |               |
-| `Eq` (derived) - same `[Foo]`           | 10.4          | 2.8        | 2.5           |               |
-| `Eq` (derived) - different `[Foo]`      | 2,941         | 38,630     | 2,071         |               |
-| `Eq` (derived) - `while` w/ `Foo`       | 463,595       | 40,113     | 5,335         |               |
+| `Eq` - `while` w/ `Int`                 | 3,188         | 199        | 198           |               |
+| `Eq` (derived) - same `[Foo]`           | 10.2          | 2.7        | 2.5           |               |
+| `Eq` (derived) - different `[Foo]`      | 2,941         | 45,416     | 2,071         |               |
+| `Eq` (derived) - `while` w/ `Foo`       | 463,595       | 45,652     | 5,335         |               |
 | `Eq` (hand-written) - same `[Foo]`      | 10.1          | 2.8        | 2.5           |               |
 | `Eq` (hand-written) - different `[Foo]` | 2,962         | 7,835      | 2,071         |               |
-| `Eq` (hand-written) - `while` w/ `Foo`  | 3,156         | 5,341      | 5,335         |               |
-| `Show` - `[Int]`                        | 537,153       | 43,633     | 41,079        | 38,190        |
+| `Eq` (hand-written) - `while` w/ `Foo`  | 8,980         | 5,341      | 5,335         |               |
+| `Show` - `[Int]`                        | 571,753       | 45,006     | 41,079        | 38,190        |
 | `Show` - `String`                       | 2,841\*       | 3.2        | 2.8           | 140,000       |
 | `Foldable.fold` on `[Int]`              | 3,448         | 5,026      | 7,939         | 3,330         |
 | `Foldable.fold` on `[Maybe Int]`        | 6,430         | 12,506     |               | 14,260        |
-| `State` - `get`                         | 18.6          | 33.3       |               | 3.9           |
+| `State` - `get`                         | 18.6          | 30.6       |               | 3.9           |
 | `State` - `>>=`                         | 90.1          | 139.1      |               | 10.43         |
-| `State` - `flatMap`                     | 80            | 133.3      |               |               |
+| `State` - `flatMap`                     | 64.5          | 146.6      |               |               |
 | `State` - countdown                     |               | 8,753,951  |               | 6,069         |
-| `StateT` - countdown                    | 4,387,924     | 8,920,953  |               | 15.4          |
+| `StateT` - countdown                    | 4,387,924     | 9,744,808  |               | 15.4          |
 | `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
 | `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
 | `IO` - recurse 1000                     | 107,348       | 12,373     |               | 616.8         |
@@ -387,12 +387,12 @@ So ScalaZ chooses lawfulness over convenience in this case.
 
 ## Project Pulses<a id="sec-5-1"></a>
 
-As of 2018 January 4.
+As of 2017 November 6.
 
 | Project | Releases | Watchers | Stars | Forks | Commits | Prev. Month Commits | ScalaJS | Scala Native |
 |------- |-------- |-------- |----- |----- |------- |------------------- |------- |------------ |
-| ScalaZ  | 109      | 253      | 3519  | 536   | 6157    | 42                  | Yes     | Yes          |
-| Cats    | 25       | 185      | 2246  | 559   | 3378    | 57                  | Yes     | **No**       |
+| ScalaZ  | 106      | 257      | 3312  | 534   | 6101    | 45                  | Yes     | Yes          |
+| Cats    | 22       | 174      | 2118  | 493   | 3280    | 51                  | Yes     | **No**       |
 
 ScalaZ's numbers are higher, but that's to be expected as it's an older project. Otherwise the projects seem to be about equally active. Notably missing is the lack of Scala Native support in Cats.
 
@@ -408,7 +408,7 @@ That in mind, here is a simplified view of their library ecosystems:
 
 -   Origami is a port of Haskell's [foldl](https://hackage.haskell.org/package/foldl) library
 -   Atto is a port of Haskell's [attoparsec](https://hackage.haskell.org/package/attoparsec) library
--   Decline is a port of Haskell's [optparse-applicative](https://hackage.haskell.org/package/optparse-applicative) library
+-   Decline and optparse-applicative are ports of Haskell's [optparse-applicative](https://hackage.haskell.org/package/optparse-applicative) library
 -   Refined is a port of Haskell's [refined](https://hackage.haskell.org/package/refined) library
 -   Monocle is a port of Haskell's [lens](https://hackage.haskell.org/package/lens) library
 
