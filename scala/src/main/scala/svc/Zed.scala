@@ -58,17 +58,15 @@ object Zed {
 
   /* --- EQUAL --- */
 
-  @deriving(Equal)
+  // @deriving(Equal)
   case class Foo(age: Int, msg: String, truthy: Boolean)
 
-  /*
   object Foo {
     implicit val eqFoo: Equal[Foo] = new Equal[Foo] {
       def equal(foo0: Foo, foo1: Foo): Boolean =
         foo0.eq(foo1) || (foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy)
     }
   }
-  */
 
   /** Scala has "universal equality". We can compare any two objects as equal, even
     * if it doesn't make sense to. Even if that type has no notion of equality (like `Function`).

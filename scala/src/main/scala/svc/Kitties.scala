@@ -3,6 +3,7 @@ package svc
 /* Straight-forward imports */
 import cats._
 import cats.data._
+import cats.derived
 import cats.effect._  /* Requires a separate dep, cats-effect */
 import cats.implicits._
 
@@ -22,7 +23,10 @@ object Kitties {
   case class Foo(age: Int, msg: String, truthy: Boolean)
 
   object Foo {
-    // implicit val fooShow: Eq[Foo] = derive.eq[Foo]
+    // implicit val fooShow: Eq[Foo] = {
+    //   import derived.auto.eq._
+    //   derived.semi.eq
+    // }
     implicit val fooEq: Eq[Foo] = new Eq[Foo] {
       def eqv(foo0: Foo, foo1: Foo): Boolean =
         foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy
