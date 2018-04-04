@@ -2,14 +2,15 @@ name := """scalaz-vs-cats"""
 
 version := "1.0.0"
 
-scalaVersion in ThisBuild := "2.12.4"
+scalaVersion in ThisBuild := "2.12.5"
 
 /* Settings common to each sub project */
 val common = Seq(
   scalacOptions ++= Seq(
     "-deprecation",
     "-language:higherKinds",
-    "-Ypartial-unification"
+    "-Ypartial-unification",
+    "-Ybackend-parallelism", "4"
   ),
 
   resolvers += Resolver.sonatypeRepo("snapshots"),
