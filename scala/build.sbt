@@ -16,7 +16,7 @@ val common = Seq(
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.0")
+  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.0"),
 
   libraryDependencies ++= Seq(
     "com.fommil"    %% "deriving-macro"  % "0.13.0",

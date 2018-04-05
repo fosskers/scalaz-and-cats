@@ -23,14 +23,11 @@ object Kitties {
   case class Foo(age: Int, msg: String, truthy: Boolean)
 
   object Foo {
-    // implicit val fooShow: Eq[Foo] = {
-    //   import derived.auto.eq._
-    //   derived.semi.eq
+    implicit val fooShow: Eq[Foo] = derived.semi.eq[Foo]
+    // implicit val fooEq: Eq[Foo] = new Eq[Foo] {
+    //   def eqv(foo0: Foo, foo1: Foo): Boolean =
+    //     foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy
     // }
-    implicit val fooEq: Eq[Foo] = new Eq[Foo] {
-      def eqv(foo0: Foo, foo1: Foo): Boolean =
-        foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy
-    }
   }
 
   /* Same "triple equals" as ScalaZ. Cats matched Haskell in calling
