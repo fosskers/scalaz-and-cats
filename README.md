@@ -69,7 +69,9 @@ Cats:
 
 ## I'm writing a performance-sensitive application<a id="sec-2-2"></a>
 
-Lean toward Cats, it tends to be faster in aggregate. Are you using a database? Consider [Doobie](https://github.com/tpolecat/doobie), which uses Cats.
+If microbenchmarks and object allocations matter, lean toward Cats, it tends to be faster in aggregate for strict calculations.
+
+If your project has expensive chunks of work that you wish to avoid evaluating unless absolutely needed, lean towards Scalaz with its preference towards lazy evaluation.
 
 ## I want to improve quality-of-life for my Scala devs<a id="sec-2-3"></a>
 
