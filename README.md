@@ -71,7 +71,7 @@ Cats:
 
 If microbenchmarks and object allocations matter, lean toward Cats, it tends to be faster in aggregate for strict calculations.
 
-If your project has expensive chunks of work that you wish to avoid evaluating unless absolutely needed, lean towards Scalaz with its preference towards lazy evaluation.
+If your project has expensive chunks of work that you wish to avoid evaluating unless absolutely needed, lean towards ScalaZ with its preference for lazy evaluation.
 
 ## I want to improve quality-of-life for my Scala devs<a id="sec-2-3"></a>
 
@@ -148,6 +148,7 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 
 -   `scalaz-deriving v0.13.0`
 -   `kittens 1.0.0-RC3`
+-   `scalaz-ioeffect-0.0.1-SNAPSHOT` (ScalaZ 8 `IO` backport)
 
 | Benchmark                               | ScalaZ 7.2.20 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
 |--------------------------------------- |------------- |---------- |------------- |------------- |
@@ -171,9 +172,9 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 | `StateT` - countdown                    | 4,387,924     | 9,744,808  |               | 15.4          |
 | `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
 | `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| `IO` - recurse 1000                     | 107,348       | 12,373     |               | 616.8         |
-| `IO` - recurse 10000                    | 1,073,504     | 129,382    |               | 6,021         |
-| `IO` - recurse 100000                   | 10,857,257    | 1,260,103  |               | 59,670        |
+| `IO` - recurse 1000                     | 9,757         | 12,373     |               | 616.8         |
+| `IO` - recurse 10000                    | 88,675        | 129,382    |               | 6,021         |
+| `IO` - recurse 100000                   | 983,991       | 1,260,103  |               | 59,670        |
 
 *Notes:*
 
