@@ -182,12 +182,14 @@ Vanilla Scala and Haskell results are also included where applicable.
 
 - *Type-safe equality checking is on-par or faster than Vanilla Scala.* So, there seems
   to be no reason not to use ~Eq.===~ in all cases.
-- At the small scale (i.e. a single ~>>=~), ScalaZ tends to be faster.
-- At aggregate scale, Cats tends to be faster.
-- Neither library performs well on recursive Monadic operations. Haskell is two to
-  three orders of magnitude faster in this regard. In particular, GHC heavily optimizes
-  both ~IO~ and ~State~ operations.
-
+- Except for a few outliers, performance of the two libraries is within the same ballpark.
+- One should favour hand-written typeclass instances for Cats, while deriving seems
+  reliable for ScalaZ.
+- Neither library performs well on recursive Monadic operations (~State~ especially).
+  Haskell is two to three orders of magnitude faster in this regard. In particular,
+  GHC heavily optimizes both ~IO~ and ~State~ operations.
+- As of 2018 April, both ScalaZ and Cats have fastly improved the performance of their
+  ~IO~ Monad. This bodes well for Scala-based webservers like [[https://http4s.org/][http4s]].
 
 ** Usage Considerations
 
