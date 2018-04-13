@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE BangPatterns #-}
 
 module Haskell where
 
@@ -47,11 +48,11 @@ bind :: State Int ()
 bind = get >>= put . (+ 1)
 
 countdown :: State Int Int
-countdown = get >>= (\n -> if n <= 0 then pure n else put (n-1) >> countdown)
+countdown = get >>= (\(!n) -> if n <= 0 then pure n else put (n-1) >> countdown)
 
 -- | The base Monad can be `Either`, as we expect to be possible.
 countdownT :: StateT Int (Either String) ()
-countdownT = get >>= (\n -> if n <= 0 then throwError "darn!" else put (n-1) >> countdownT)
+countdownT = get >>= (\(!n) -> if n <= 0 then throwError "darn!" else put (n-1) >> countdownT)
 
 -- | Peel off the layers of the stack one at a time, from the outside inward.
 runCountdownT :: Either String ((), Int)
@@ -74,7 +75,7 @@ greet msg = putStrLn $ "Hi, " ++ msg ++ "!"
 
 recurseIO :: Int -> IO Int
 recurseIO 0 = pure 0
-recurseIO n = pure (n - 1) >>= recurseIO
+recurseIO !n = pure (n - 1) >>= recurseIO
 
 -- | Is is not wise to manually throw exceptions in Haskell.
 ioException :: IO ()
