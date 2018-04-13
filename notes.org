@@ -188,11 +188,6 @@ Vanilla Scala and Haskell results are also included where applicable.
   three orders of magnitude faster in this regard. In particular, GHC heavily optimizes
   both ~IO~ and ~State~ operations.
 
-*** Caveat
-
-As of this writing (2017 November), ScalaZ 8 is still under development but promises
-significant performance improvements for their ~IO~ Monad. The benchmarks above
-will have to be reran when it is released.
 
 ** Usage Considerations
 

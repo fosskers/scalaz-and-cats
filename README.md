@@ -17,7 +17,6 @@
   - [Benchmarks](#sec-3)
     - [Results](#sec-3-1)
     - [Observations](#sec-3-2)
-    - [Caveat](#sec-3-3)
   - [Usage Considerations](#sec-4)
     - [API Accessibility](#sec-4-1)
     - [Features](#sec-4-2)
@@ -187,10 +186,6 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 -   At the small scale (i.e. a single `>>=`), ScalaZ tends to be faster.
 -   At aggregate scale, Cats tends to be faster.
 -   Neither library performs well on recursive Monadic operations. Haskell is two to three orders of magnitude faster in this regard. In particular, GHC heavily optimizes both `IO` and `State` operations.
-
-## Caveat<a id="sec-3-3"></a>
-
-As of this writing (2017 November), ScalaZ 8 is still under development but promises significant performance improvements for their `IO` Monad. The benchmarks above will have to be reran when it is released.
 
 # Usage Considerations<a id="sec-4"></a>
 
