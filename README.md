@@ -244,7 +244,7 @@ From its Scaladocs:
 
 The implication is that `Maybe` should be safer and slightly more performant than `Option`. Ironically, many ScalaZ methods that yield an "optional" value use `Option` and not `Maybe`.
 
-Where Monad Transformers and concerned, ScalaZ provides both `MaybeT` and `OptionT`.
+Where Monad Transformers are concerned, ScalaZ provides both `MaybeT` and `OptionT`.
 
 ### ScalaZ: `EphemeralStream`<a id="sec-4-2-3"></a>
 
