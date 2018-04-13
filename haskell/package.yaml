@@ -5,8 +5,8 @@ version:             0.1.0.0
 homepage:            https://github.com/fosskers/scalaz-and-cats
 license:             BSD3
 author:              Colin Woodbury
-maintainer:          colingw@gmail.com
-copyright:           2017 Azavea
+maintainer:          colin@fosskers.ca
+copyright:           2017 - 2018 Colin Woodbury
 category:            Web
 
 dependencies:
@@ -24,7 +24,7 @@ benchmarks:
       - -threaded
       - -O2
     dependencies:
-      - criterion >= 1.1 && < 1.3
+      - criterion >= 1.1 && < 1.4
       - scalaz-and-cats
       - text
       - text-show
