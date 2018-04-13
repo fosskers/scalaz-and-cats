@@ -171,18 +171,20 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 | `StateT` - countdown                    | 4,387,924     | 9,744,808  |               | 15.4          |
 | `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
 | `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| `IO` - recurse 1000                     | 9,757         | 12,373     |               | 616.8         |
-| `IO` - recurse 10000                    | 88,675        | 129,382    |               | 6,021         |
-| `IO` - recurse 100000                   | 983,991       | 1,260,103  |               | 59,670        |
+| `IO` - recurse 1000                     | 9,757         | 12,373     | 473,972\*     | 616.8         |
+| `IO` - recurse 10000                    | 88,675        | 129,382    | 4,659,933     | 6,021         |
+| `IO` - recurse 100000                   | 983,991       | 1,260,103  | 47,428,441    | 59,670        |
 
 *Notes:*
 
 -   `Eq` benchmarks for ScalaZ employ its `IList` type, not vanilla `List`
 -   `Show` for ScalaZ and Cats behaves differently. ScalaZ's prefixes and affixes quotation marks, so that Strings can be copy-pasted between editor and REPL. This is what Haskell's `Show` does as well. Cats does not do this, so it can "return early" in the case of `String`.
+-   `IO` benchmarks for Vanilla Scala are usage of `Future`.
 
 ## Observations<a id="sec-3-2"></a>
 
 -   **Type-safe equality checking is on-par or faster than Vanilla Scala.** So, there seems to be no reason not to use `Eq.===` in all cases.
+-   **Avoid Future from Vanilla Scala.** Other than being less safe and harder to reason about, its performance is the worst of the four by far.
 -   Except for a few outliers, performance of the two libraries is within the same ballpark.
 -   One should favour hand-written typeclass instances for Cats, while deriving seems reliable for ScalaZ.
 -   Neither library performs well on recursive Monadic operations (`State` especially). Haskell is two to three orders of magnitude faster in this regard. In particular, GHC heavily optimizes both `IO` and `State` operations.

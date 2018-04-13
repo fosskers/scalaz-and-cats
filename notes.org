@@ -166,9 +166,9 @@ Vanilla Scala and Haskell results are also included where applicable.
 | ~StateT~ - countdown                    | 4,387,924     | 9,744,808  |               | 15.4          |
 | ~Applicative~ - sum ~(<*>)~             | 31,429        | 32,132     |               | 22,140        |
 | ~Applicative~ - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| ~IO~ - recurse 1000                     | 9,757         | 12,373     |               | 616.8         |
-| ~IO~ - recurse 10000                    | 88,675        | 129,382    |               | 6,021         |
-| ~IO~ - recurse 100000                   | 983,991       | 1,260,103  |               | 59,670        |
+| ~IO~ - recurse 1000                     | 9,757         | 12,373     | 473,972*      | 616.8         |
+| ~IO~ - recurse 10000                    | 88,675        | 129,382    | 4,659,933     | 6,021         |
+| ~IO~ - recurse 100000                   | 983,991       | 1,260,103  | 47,428,441    | 59,670        |
 
 /Notes:/
 
@@ -177,11 +177,14 @@ Vanilla Scala and Haskell results are also included where applicable.
   quotation marks, so that Strings can be copy-pasted between editor and REPL.
   This is what Haskell's ~Show~ does as well. Cats does not do this, so it can
   "return early" in the case of ~String~.
+- ~IO~ benchmarks for Vanilla Scala are usage of ~Future~.
 
 *** Observations
 
 - *Type-safe equality checking is on-par or faster than Vanilla Scala.* So, there seems
   to be no reason not to use ~Eq.===~ in all cases.
+- *Avoid Future from Vanilla Scala.* Other than being less safe and harder to reason about,
+  its performance is the worst of the four by far.
 - Except for a few outliers, performance of the two libraries is within the same ballpark.
 - One should favour hand-written typeclass instances for Cats, while deriving seems
   reliable for ScalaZ.
