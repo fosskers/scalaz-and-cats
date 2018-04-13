@@ -100,11 +100,25 @@ ScalaZ does. Its core has a larger API, provides more features up-front, and ten
 
 Both ScalaZ 7 and Cats have a `effects` subpackage which provides an `IO` type. They both help you contain "real world" side-effects into smaller areas of your code base, freeing the rest of it to purity ([referential transparency](https://en.wikipedia.org/wiki/Referential_transparency)). They also help you wrangle IO-based Exceptions.
 
-Cats' `IO` is currently faster in aggregate. However, an overhaul of `scalaz-effects` with many orders of magnitude of improvement in performance is promised [for ScalaZ 8](http://degoes.net/articles/scalaz8-is-the-future), so you may want to wait for that if IO is a great concern to you.
+A recent (2018 April) development is that of [scalaz-ioeffect](https://github.com/scalaz/ioeffect), a backport of the `IO` Monad implementation from ScalaZ 8. This offers a 2 order-of-magnitude performance improvement over `scalaz-effect`, which puts it about 20% faster than `IO` from Cats, and around 50x faster than `Future` from vanilla Scala.
 
 ## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-10"></a>
 
-[Wait for ScalaZ 8.](http://degoes.net/articles/scalaz8-is-the-future)
+The `IO` Monad can help you, my friend. First, tell me why `Future` is in your life:
+
+-   **I'm using Actors.** Are you sure you need to be? Actors are very pervasive: once code is "Actory" it's hard to reverse that. Are you sure you don't just need simple concurrency (see below)?
+-   **I'm using a database library that returns Futures.** Slick, maybe? Consider [doobie](https://tpolecat.github.io/doobie/) instead, which returns in `IO`.
+-   **I'm using a webserver whose endpoints need Futures.** `akka-http`? Play? Consider [http4s](https://http4s.org/), which is built on [fs2](https://github.com/functional-streams-for-scala/fs2) and runs in the `IO` Monad of your choice.
+-   **I'm doing some simple concurrency work.** `IO` types come with a friend, [Fiber](https://typelevel.org/cats-effect/datatypes/fiber.html), that allows you to logically and safely model concurrent operations. The result of all operations in `Fiber` must end in `IO`, so concurrent effects can never "escape" into pure code. Bonus: `Fiber` s aren't fixed to JVM threads - they yield intelligently to each other, so you can have as many as you want. You also don't need to worry about `ExecutionContext`.
+
+`Future` does not have your best interests at heart. The fundamental difference between it and `IO` is this: `IO` is a *description* of a runnable program which can be composed with other programs (other `IO`). `Future` is a *running operation*. As soon as you have:
+
+```scala
+// Fetch Foo from the DB
+val fut: Future[Foo] = ...
+```
+
+`fut` is *running*, and you need to keep track of that in your head. This is not the case for `IO`, which makes it much easier to reason about program behaviour in general.
 
 ## Just gimme Monads<a id="sec-2-11"></a>
 
