@@ -12,6 +12,7 @@ category:            Web
 dependencies:
   - base >= 4.7 && < 5
   - mtl
+  - unliftio >= 0.2 && < 0.3
 
 library:
   source-dirs: src

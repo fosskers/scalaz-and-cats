@@ -3,7 +3,7 @@
 
 module Haskell where
 
-import Control.Exception (ErrorCall, catch)
+import UnliftIO.Exception
 import Control.Monad.Except
 import Control.Monad.State.Strict
 import Data.Foldable (fold)
@@ -79,13 +79,13 @@ recurseIO !n = pure (n - 1) >>= recurseIO
 
 -- | Is is not wise to manually throw exceptions in Haskell.
 ioException :: IO ()
-ioException = putStrLn "Step 1" >> error "oh no" >> putStrLn "Step 2"
+ioException = putStrLn "Step 1" >> throwString "oh no" >> putStrLn "Step 2"
 
 catchingExceptions :: IO ()
-catchingExceptions = catch ioException (\(_ :: ErrorCall) -> putStrLn "crap")
+catchingExceptions = catch ioException (\(_ :: SomeException) -> putStrLn "crap")
 
 ioCountdown :: Int -> IO Int
-ioCountdown 0  = error "oh no"
+ioCountdown 0  = throwString "oh no"
 ioCountdown !n = pure (n - 1) >>= ioCountdown
 
 ioCountdownE :: Int -> ExceptT String IO Int
