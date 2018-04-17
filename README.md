@@ -23,6 +23,7 @@
       - [ScalaZ: `IList`](#sec-4-2-1)
       - [ScalaZ: `Maybe`](#sec-4-2-2)
       - [ScalaZ: `EphemeralStream`](#sec-4-2-3)
+      - [ScalaZ: Bifunctor `IO[E, A]`](#sec-4-2-4)
     - [Typeclasses](#sec-4-3)
       - [Custom Typeclasses](#sec-4-3-1)
       - [Instance Derivation](#sec-4-3-2)
@@ -157,43 +158,52 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 
 ## Results<a id="sec-3-1"></a>
 
-*All times are in nanoseconds. [Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
+*All times are in nanoseconds, lower numbers are better.*
+
+*[Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
 
 -   `scalaz-deriving v0.13.0`
 -   `kittens 1.0.0-RC3`
--   `scalaz-ioeffect-0.0.1-SNAPSHOT` (ScalaZ 8 `IO` backport)
+-   `scalaz-ioeffect-1.0.1-SNAPSHOT` (ScalaZ 8 `IO` backport)
 
-| Benchmark                               | ScalaZ 7.2.20 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
-|--------------------------------------- |------------- |---------- |------------- |------------- |
-| `Eq` - same `[Int]`                     | 10.4\*        | 2.5        | 2.4           | 3,974         |
-| `Eq` - different `[Int]`                | 5,792         | 3,983      | 5,180         |               |
-| `Eq` - `while` w/ `Int`                 | 3,188         | 199        | 198           |               |
-| `Eq` (derived) - same `[Foo]`           | 10.2          | 2.7        | 2.5           |               |
-| `Eq` (derived) - different `[Foo]`      | 2,941         | 45,416     | 2,071         |               |
-| `Eq` (derived) - `while` w/ `Foo`       | 463,595       | 45,652     | 5,335         |               |
-| `Eq` (hand-written) - same `[Foo]`      | 10.1          | 2.8        | 2.5           |               |
-| `Eq` (hand-written) - different `[Foo]` | 2,962         | 7,835      | 2,071         |               |
-| `Eq` (hand-written) - `while` w/ `Foo`  | 8,980         | 5,341      | 5,335         |               |
-| `Show` - `[Int]`                        | 571,753       | 45,006     | 41,079        | 38,190        |
-| `Show` - `String`                       | 2,841\*       | 3.2        | 2.8           | 140,000       |
-| `Foldable.fold` on `[Int]`              | 3,448         | 5,026      | 7,939         | 3,330         |
-| `Foldable.fold` on `[Maybe Int]`        | 6,430         | 12,506     |               | 14,260        |
-| `State` - `get`                         | 18.6          | 30.6       |               | 3.9           |
-| `State` - `>>=`                         | 90.1          | 139.1      |               | 10.43         |
-| `State` - `flatMap`                     | 64.5          | 146.6      |               |               |
-| `State` - countdown                     |               | 8,753,951  |               | 6,069         |
-| `StateT` - countdown                    | 4,387,924     | 9,744,808  |               | 15.4          |
-| `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
-| `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| `IO` - recurse 1000                     | 9,757         | 12,373     | 473,972\*     | 616.8         |
-| `IO` - recurse 10000                    | 88,675        | 129,382    | 4,659,933     | 6,021         |
-| `IO` - recurse 100000                   | 983,991       | 1,260,103  | 47,428,441    | 59,670        |
+| Benchmark                                   | ScalaZ 7.2.21 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
+|------------------------------------------- |------------- |---------- |------------- |------------- |
+| `Eq` - same `[Int]`                         | 10.4\*        | 2.5        | 2.4           | 3,974         |
+| `Eq` - different `[Int]`                    | 5,792         | 3,983      | 5,180         |               |
+| `Eq` - `while` w/ `Int`                     | 3,188         | 199        | 198           |               |
+| `Eq` (derived) - same `[Foo]`               | 10.2          | 2.7        | 2.5           |               |
+| `Eq` (derived) - different `[Foo]`          | 2,941         | 45,416     | 2,071         |               |
+| `Eq` (derived) - `while` w/ `Foo`           | 463,595       | 45,652     | 5,335         |               |
+| `Eq` (hand-written) - same `[Foo]`          | 10.1          | 2.8        | 2.5           |               |
+| `Eq` (hand-written) - different `[Foo]`     | 2,962         | 7,835      | 2,071         |               |
+| `Eq` (hand-written) - `while` w/ `Foo`      | 8,980         | 5,341      | 5,335         |               |
+| `Show` - `[Int]`                            | 571,753       | 45,006     | 41,079        | 38,190        |
+| `Show` - `String`                           | 2,841\*       | 3.2        | 2.8           | 140,000       |
+| `Foldable.fold` on `[Int]`                  | 3,448         | 5,026      | 7,939         | 3,330         |
+| `Foldable.fold` on `[Maybe Int]`            | 6,430         | 12,506     |               | 14,260        |
+| `State` - `get`                             | 18.6          | 30.6       |               | 3.9           |
+| `State` - `>>=`                             | 90.1          | 139.1      |               | 10.43         |
+| `State` - `flatMap`                         | 64.5          | 146.6      |               |               |
+| `State` - countdown                         |               | 8,753,951  |               | 6,069         |
+| `StateT` - countdown                        | 4,387,924     | 9,744,808  |               | 15.4          |
+| `Applicative` - sum `(<*>)`                 | 31,429        | 32,132     |               | 22,140        |
+| `Applicative` - sum (cartesian)             | 54,774        | 33,638     |               |               |
+| `IO` - Deep `flatMap` - 1000                | 9,757         | 12,373     | 473,972\*     | 616.8         |
+| `IO` - Deep `flatMap` - 10000               | 88,675        | 129,382    | 4,659,933     | 6,021         |
+| `IO` - Deep `flatMap` - 100000              | 896,186       | 1,260,103  | 47,428,441    | 59,670        |
+| `IO` - Deep `flatMap` w/ error ADT - 1k     | 11,383        | 46,958\*   |               | 937           |
+| `IO` - Deep `flatMap` w/ error ADT - 10k    | 95,951        | 469,918    |               | 9,048         |
+| `IO` - Deep `flatMap` w/ error ADT - 100k   | 963,542       | 4,738,863  |               | 91,570        |
+| `IO` - Deep `flatMap` w/ `Exception` - 1k   | 13,292        | 13,047     | 533,099       | 1,147         |
+| `IO` - Deep `flatMap` w/ `Exception` - 10k  | 103,312       | 100,120    | 4,723,224     | 11,050        |
+| `IO` - Deep `flatMap` w/ `Exception` - 100k | 970,776       | 992,538    | 48,350,346    | 109,600       |
 
 *Notes:*
 
 -   `Eq` benchmarks for ScalaZ employ its `IList` type, not vanilla `List`
 -   `Show` for ScalaZ and Cats behaves differently. ScalaZ's prefixes and affixes quotation marks, so that Strings can be copy-pasted between editor and REPL. This is what Haskell's `Show` does as well. Cats does not do this, so it can "return early" in the case of `String`.
 -   `IO` benchmarks for Vanilla Scala are usage of `Future`.
+-   The *error ADT* benchmarks for Cats and Haskell use `EitherT[IO, E, A]`, while ScalaZ `IO` is a bifunctor with explicit error type: `IO[E, A]`. See the *Features* section for more information.
 
 ## Observations<a id="sec-3-2"></a>
 
@@ -265,6 +275,16 @@ How does it perform?
 | Tail Recursion | 45.9 | 24.1  |        |       | 69.8           |                 |          |
 
 We see similar slowdowns for chained higher-order ops as well. Looks like building in the laziness has its cost.
+
+### ScalaZ: Bifunctor `IO[E, A]`<a id="sec-4-2-4"></a>
+
+Thanks to the backport library [scalaz-ioeffect](https://github.com/scalaz/ioeffect), ScalaZ 7 `IO` is now a bifunctor: `IO[E, A]`. Any possible error is explicit in the type signature. Typically this will be:
+
+-   `Exception` or `Throwable` for Java-like exceptions
+-   `Void` for when an error is provably impossible
+-   Some custom error ADT unique to your application
+
+IO-as-a-bifunctor is a living experiment that offers semantics not yet available in Cats or even Haskell's `IO`. The closest approximation is a Cats/Haskell `EitherT[IO, E, A]`, which, having two modes of error reporting has been found over time to not be ideal. In the case of Scala, this `EitherT` wrapping incurs a 4x slowdown.
 
 ## Typeclasses<a id="sec-4-3"></a>
 
