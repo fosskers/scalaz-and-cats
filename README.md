@@ -191,9 +191,9 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 | `IO` - Deep `flatMap` - 1000                | 9,757         | 12,373     | 473,972\*     | 616.8         |
 | `IO` - Deep `flatMap` - 10000               | 88,675        | 129,382    | 4,659,933     | 6,021         |
 | `IO` - Deep `flatMap` - 100000              | 896,186       | 1,260,103  | 47,428,441    | 59,670        |
-| `IO` - Deep `flatMap` w/ error ADT - 1k     | 11,383        | 46,958\*   |               | 937           |
-| `IO` - Deep `flatMap` w/ error ADT - 10k    | 95,951        | 469,918    |               | 9,048         |
-| `IO` - Deep `flatMap` w/ error ADT - 100k   | 963,542       | 4,738,863  |               | 91,570        |
+| `IO` - Deep `flatMap` w/ error ADT - 1k     | 11,383        | 46,958\*   |               | 626           |
+| `IO` - Deep `flatMap` w/ error ADT - 10k    | 95,951        | 469,918    |               | 6,058         |
+| `IO` - Deep `flatMap` w/ error ADT - 100k   | 963,542       | 4,738,863  |               | 60,270        |
 | `IO` - Deep `flatMap` w/ `Exception` - 1k   | 13,292        | 13,047     | 533,099       | 1,147         |
 | `IO` - Deep `flatMap` w/ `Exception` - 10k  | 103,312       | 100,120    | 4,723,224     | 11,050        |
 | `IO` - Deep `flatMap` w/ `Exception` - 100k | 970,776       | 992,538    | 48,350,346    | 109,600       |
