@@ -3,7 +3,7 @@
 
 module Haskell where
 
-import Control.Exception
+import Control.Exception (ErrorCall, catch)
 import Control.Monad.Except
 import Control.Monad.State.Strict
 import Data.Foldable (fold)
@@ -74,7 +74,7 @@ greet :: String -> IO ()
 greet msg = putStrLn $ "Hi, " ++ msg ++ "!"
 
 recurseIO :: Int -> IO Int
-recurseIO 0 = pure 0
+recurseIO 0  = pure 0
 recurseIO !n = pure (n - 1) >>= recurseIO
 
 -- | Is is not wise to manually throw exceptions in Haskell.
@@ -83,6 +83,14 @@ ioException = putStrLn "Step 1" >> error "oh no" >> putStrLn "Step 2"
 
 catchingExceptions :: IO ()
 catchingExceptions = catch ioException (\(_ :: ErrorCall) -> putStrLn "crap")
+
+ioCountdown :: Int -> IO Int
+ioCountdown 0  = error "oh no"
+ioCountdown !n = pure (n - 1) >>= ioCountdown
+
+ioCountdownE :: Int -> ExceptT String IO Int
+ioCountdownE 0  = throwError "oh no"
+ioCountdownE !n = pure (n - 1) >>= ioCountdownE
 
 --------------
 -- TYPECLASSES
