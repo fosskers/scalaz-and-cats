@@ -199,6 +199,20 @@ object Kitties {
     }
   }
 
+  class Terrible
+
+  type EIO[A] = EitherT[IO, Terrible, A]
+
+  def ioCountdown(n: Int): EIO[Int] = n match {
+    case 0 => MonadError[EIO, Terrible].raiseError(new Terrible)
+    case n => EitherT.pure[IO, Terrible](n - 1).flatMap(ioCountdown)
+  }
+
+  def ioCountdownE(n: Int): IO[Int] = n match {
+    case 0 => IO.raiseError(new Exception)
+    case n => IO.pure(n - 1).flatMap(ioCountdownE)
+  }
+
   /* --- ASYNC IO --- */
 
   /* There are functions here, but I couldn't get any of them to demonstrate
@@ -206,18 +220,18 @@ object Kitties {
    */
 
   def sleepy(msg: String, n: Int): IO[Unit] = {
-    if (n <= 0) IO(Unit) else IO(println(s"THREAD: ${msg} ${n}")) *> sleepy(msg, n-1)
+    if (n <= 0) IO(()) else IO(println(s"THREAD: ${msg} ${n}")) *> sleepy(msg, n-1)
   }
 
   def asyncIO: Unit = {
-    (sleepy("hi", 50) *> sleepy("ho", 50)).unsafeRunAsync({ _ => Unit })
+    (sleepy("hi", 50) *> sleepy("ho", 50)).unsafeRunAsync({ _ => () })
   }
 
   def aysink: Unit = {
     val act: IO[Unit] =
       IO.async[Unit](f => f(Right(println("hi")))) *> IO.async[Unit](f => f(Right(println("ho")))) *> IO.async(f => f(Right(println("hm"))))
 
-    act.unsafeRunAsync({ _ => Unit })
+    act.unsafeRunAsync({ _ => () })
   }
 }
 

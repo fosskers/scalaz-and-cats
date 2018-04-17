@@ -10,6 +10,10 @@ val common = Seq(
     "-deprecation",
     "-language:higherKinds",
     "-Ypartial-unification",
+    "-Ywarn-value-discard",
+    "-Ywarn-unused-import",
+    "-Ywarn-dead-code",
+    "-Ywarn-numeric-widen",
     "-Ybackend-parallelism", "4"
   ),
 
@@ -24,8 +28,8 @@ val common = Seq(
     "org.typelevel" %% "cats-core"       % "1.1.0",
     "org.typelevel" %% "cats-effect"     % "0.10",
     "org.typelevel" %% "kittens"         % "1.0.0-RC3",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.20",
-    "org.scalaz"    %% "scalaz-ioeffect" % "0.0.1-SNAPSHOT"
+    "org.scalaz"    %% "scalaz-core"     % "7.2.21",
+    "org.scalaz"    %% "scalaz-ioeffect" % "1.0.1-SNAPSHOT"
   )
 )
 
