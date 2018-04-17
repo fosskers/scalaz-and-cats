@@ -1,12 +1,12 @@
-name:                haskell
+name:                scalaz-and-cats
 version:             0.1.0.0
 #synopsis:
 #description:
-homepage:            https://github.com/fosskers/scalaz-vs-cats
+homepage:            https://github.com/fosskers/scalaz-and-cats
 license:             BSD3
 author:              Colin Woodbury
-maintainer:          colingw@gmail.com
-copyright:           2017 Azavea
+maintainer:          colin@fosskers.ca
+copyright:           2017 - 2018 Colin Woodbury
 category:            Web
 
 dependencies:
@@ -24,7 +24,7 @@ benchmarks:
       - -threaded
       - -O2
     dependencies:
-      - criterion >= 1.1 && < 1.3
-      - haskell
+      - criterion >= 1.1 && < 1.4
+      - scalaz-and-cats
       - text
-      - text-show >= 3.6 && < 3.7
+      - text-show

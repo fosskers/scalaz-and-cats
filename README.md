@@ -17,13 +17,13 @@
   - [Benchmarks](#sec-3)
     - [Results](#sec-3-1)
     - [Observations](#sec-3-2)
-    - [Caveat](#sec-3-3)
   - [Usage Considerations](#sec-4)
     - [API Accessibility](#sec-4-1)
     - [Features](#sec-4-2)
       - [ScalaZ: `IList`](#sec-4-2-1)
       - [ScalaZ: `Maybe`](#sec-4-2-2)
       - [ScalaZ: `EphemeralStream`](#sec-4-2-3)
+      - [ScalaZ: Bifunctor `IO[E, A]`](#sec-4-2-4)
     - [Typeclasses](#sec-4-3)
       - [Custom Typeclasses](#sec-4-3-1)
       - [Instance Derivation](#sec-4-3-2)
@@ -69,7 +69,9 @@ Cats:
 
 ## I'm writing a performance-sensitive application<a id="sec-2-2"></a>
 
-Lean toward Cats, it tends to be faster in aggregate. Are you using a database? Consider [Doobie](https://github.com/tpolecat/doobie), which uses Cats.
+If microbenchmarks and object allocations matter, lean toward Cats, it tends to be faster in aggregate for strict calculations.
+
+If your project has expensive chunks of work that you wish to avoid evaluating unless absolutely needed, lean towards ScalaZ with its preference for lazy evaluation.
 
 ## I want to improve quality-of-life for my Scala devs<a id="sec-2-3"></a>
 
@@ -99,11 +101,25 @@ ScalaZ does. Its core has a larger API, provides more features up-front, and ten
 
 Both ScalaZ 7 and Cats have a `effects` subpackage which provides an `IO` type. They both help you contain "real world" side-effects into smaller areas of your code base, freeing the rest of it to purity ([referential transparency](https://en.wikipedia.org/wiki/Referential_transparency)). They also help you wrangle IO-based Exceptions.
 
-Cats' `IO` is currently faster in aggregate. However, an overhaul of `scalaz-effects` with many orders of magnitude of improvement in performance is promised [for ScalaZ 8](http://degoes.net/articles/scalaz8-is-the-future), so you may want to wait for that if IO is a great concern to you.
+A recent (2018 April) development is that of [scalaz-ioeffect](https://github.com/scalaz/ioeffect), a backport of the `IO` Monad implementation from ScalaZ 8. This offers a 2 order-of-magnitude performance improvement over `scalaz-effect`, which puts it about 20% faster than `IO` from Cats, and around 50x faster than `Future` from vanilla Scala.
 
 ## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-10"></a>
 
-[Wait for ScalaZ 8.](http://degoes.net/articles/scalaz8-is-the-future)
+The `IO` Monad can help you, my friend. First, tell me why `Future` is in your life:
+
+-   **I'm using Actors.** Are you sure you need to be? Actors are very pervasive: once code is "Actory" it's hard to reverse that. Are you sure you don't just need simple concurrency (see below)?
+-   **I'm using a database library that returns Futures.** Slick, maybe? Consider [doobie](https://tpolecat.github.io/doobie/) instead, which returns in `IO`.
+-   **I'm using a webserver whose endpoints need Futures.** `akka-http`? Play? Consider [http4s](https://http4s.org/), which is built on [fs2](https://github.com/functional-streams-for-scala/fs2) and runs in the `IO` Monad of your choice.
+-   **I'm doing some simple concurrency work.** `IO` types come with a friend, [Fiber](https://typelevel.org/cats-effect/datatypes/fiber.html), that allows you to logically and safely model concurrent operations. The result of all operations in `Fiber` must end in `IO`, so concurrent effects can never "escape" into pure code. Bonus: `Fiber` s aren't fixed to JVM threads - they yield intelligently to each other, so you can have as many as you want. You also don't need to worry about `ExecutionContext`.
+
+`Future` does not have your best interests at heart. The fundamental difference between it and `IO` is this: `IO` is a *description* of a runnable program which can be composed with other programs (other `IO`). `Future` is a *running operation*. As soon as you have:
+
+```scala
+// Fetch Foo from the DB
+val fut: Future[Foo] = ...
+```
+
+`fut` is *running*, and you need to keep track of that in your head. This is not the case for `IO`, which makes it much easier to reason about program behaviour in general.
 
 ## Just gimme Monads<a id="sec-2-11"></a>
 
@@ -142,52 +158,61 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 
 ## Results<a id="sec-3-1"></a>
 
-*All times are in nanoseconds. [Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
+*All times are in nanoseconds, lower numbers are better.*
 
--   `scalaz-deriving v0.9.1-SNAPSHOT`
--   `kittens 1.0.0-RC1`
+*[Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
 
-| Benchmark                               | ScalaZ 7.2.18 | Cats 1.0.0 | Vanilla Scala | Haskell 8.0.2 |
-|--------------------------------------- |------------- |---------- |------------- |------------- |
-| `Eq` - same `[Int]`                     | 11.7\*        | 2.5        | 2.4           | 3,974         |
-| `Eq` - different `[Int]`                | 5,792         | 3,983      | 5,180         |               |
-| `Eq` - `while` w/ `Int`                 | 3,311         | 199        | 198           |               |
-| `Eq` (derived) - same `[Foo]`           | 10.4          | 2.8        | 2.5           |               |
-| `Eq` (derived) - different `[Foo]`      | 2,941         | 38,630     | 2,071         |               |
-| `Eq` (derived) - `while` w/ `Foo`       | 463,595       | 40,113     | 5,335         |               |
-| `Eq` (hand-written) - same `[Foo]`      | 10.1          | 2.8        | 2.5           |               |
-| `Eq` (hand-written) - different `[Foo]` | 2,962         | 7,835      | 2,071         |               |
-| `Eq` (hand-written) - `while` w/ `Foo`  | 3,156         | 5,341      | 5,335         |               |
-| `Show` - `[Int]`                        | 537,153       | 43,633     | 41,079        | 46,540        |
-| `Show` - `String`                       | 2,841\*       | 3.2        | 2.8           | 199.4         |
-| `Foldable.fold` on `[Int]`              | 3,448         | 5,026      | 7,939         | 3,330         |
-| `Foldable.fold` on `[Maybe Int]`        | 6,430         | 12,506     |               | 15,440        |
-| `State` - `get`                         | 18.6          | 33.3       |               | 4.1           |
-| `State` - `>>=`                         | 90.1          | 139.1      |               | 10.43         |
-| `State` - `flatMap`                     | 80            | 133.3      |               |               |
-| `State` - countdown                     |               | 8,753,951  |               | 6,069         |
-| `StateT` - countdown                    | 4,387,924     | 8,920,953  |               | 24,070        |
-| `Applicative` - sum `(<*>)`             | 31,429        | 32,132     |               | 22,140        |
-| `Applicative` - sum (cartesian)         | 54,774        | 33,638     |               |               |
-| `IO` - recurse 1000                     | 107,348       | 12,373     |               | 907.7         |
-| `IO` - recurse 10000                    | 1,073,504     | 129,382    |               | 9,095         |
-| `IO` - recurse 100000                   | 10,857,257    | 1,260,103  |               | 89,860        |
+-   `scalaz-deriving v0.13.0`
+-   `kittens 1.0.0-RC3`
+-   `scalaz-ioeffect-1.0.1-SNAPSHOT` (ScalaZ 8 `IO` backport)
+
+| Benchmark                                   | ScalaZ 7.2.21 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
+|------------------------------------------- |------------- |---------- |------------- |------------- |
+| `Eq` - same `[Int]`                         | 10.4\*        | 2.5        | 2.4           | 3,974         |
+| `Eq` - different `[Int]`                    | 5,792         | 3,983      | 5,180         |               |
+| `Eq` - `while` w/ `Int`                     | 3,188         | 199        | 198           |               |
+| `Eq` (derived) - same `[Foo]`               | 10.2          | 2.7        | 2.5           |               |
+| `Eq` (derived) - different `[Foo]`          | 2,941         | 45,416     | 2,071         |               |
+| `Eq` (derived) - `while` w/ `Foo`           | 463,595       | 45,652     | 5,335         |               |
+| `Eq` (hand-written) - same `[Foo]`          | 10.1          | 2.8        | 2.5           |               |
+| `Eq` (hand-written) - different `[Foo]`     | 2,962         | 7,835      | 2,071         |               |
+| `Eq` (hand-written) - `while` w/ `Foo`      | 8,980         | 5,341      | 5,335         |               |
+| `Show` - `[Int]`                            | 571,753       | 45,006     | 41,079        | 38,190        |
+| `Show` - `String`                           | 2,841\*       | 3.2        | 2.8           | 140,000       |
+| `Foldable.fold` on `[Int]`                  | 3,448         | 5,026      | 7,939         | 3,330         |
+| `Foldable.fold` on `[Maybe Int]`            | 6,430         | 12,506     |               | 14,260        |
+| `State` - `get`                             | 18.6          | 30.6       |               | 3.9           |
+| `State` - `>>=`                             | 90.1          | 139.1      |               | 10.43         |
+| `State` - `flatMap`                         | 64.5          | 146.6      |               |               |
+| `State` - countdown                         |               | 8,753,951  |               | 6,069         |
+| `StateT` - countdown                        | 4,387,924     | 9,744,808  |               | 15.4          |
+| `Applicative` - sum `(<*>)`                 | 31,429        | 32,132     |               | 22,140        |
+| `Applicative` - sum (cartesian)             | 54,774        | 33,638     |               |               |
+| `IO` - Deep `flatMap` - 1000                | 9,757         | 12,373     | 473,972\*     | 616.8         |
+| `IO` - Deep `flatMap` - 10000               | 88,675        | 129,382    | 4,659,933     | 6,021         |
+| `IO` - Deep `flatMap` - 100000              | 896,186       | 1,260,103  | 47,428,441    | 59,670        |
+| `IO` - Deep `flatMap` w/ error ADT - 1k     | 11,383        | 46,958\*   |               | 937           |
+| `IO` - Deep `flatMap` w/ error ADT - 10k    | 95,951        | 469,918    |               | 9,048         |
+| `IO` - Deep `flatMap` w/ error ADT - 100k   | 963,542       | 4,738,863  |               | 91,570        |
+| `IO` - Deep `flatMap` w/ `Exception` - 1k   | 13,292        | 13,047     | 533,099       | 1,147         |
+| `IO` - Deep `flatMap` w/ `Exception` - 10k  | 103,312       | 100,120    | 4,723,224     | 11,050        |
+| `IO` - Deep `flatMap` w/ `Exception` - 100k | 970,776       | 992,538    | 48,350,346    | 109,600       |
 
 *Notes:*
 
 -   `Eq` benchmarks for ScalaZ employ its `IList` type, not vanilla `List`
 -   `Show` for ScalaZ and Cats behaves differently. ScalaZ's prefixes and affixes quotation marks, so that Strings can be copy-pasted between editor and REPL. This is what Haskell's `Show` does as well. Cats does not do this, so it can "return early" in the case of `String`.
+-   `IO` benchmarks for Vanilla Scala are usage of `Future`.
+-   The *error ADT* benchmarks for Cats and Haskell use `EitherT[IO, E, A]`, while ScalaZ `IO` is a bifunctor with explicit error type: `IO[E, A]`. See the *Features* section for more information.
 
 ## Observations<a id="sec-3-2"></a>
 
 -   **Type-safe equality checking is on-par or faster than Vanilla Scala.** So, there seems to be no reason not to use `Eq.===` in all cases.
--   At the small scale (i.e. a single `>>=`), ScalaZ tends to be faster.
--   At aggregate scale, Cats tends to be faster.
--   Neither library performs well on recursive Monadic operations. Haskell is two to three orders of magnitude faster in this regard. In particular, GHC heavily optimizes both `IO` and `State` operations.
-
-## Caveat<a id="sec-3-3"></a>
-
-As of this writing (2017 November), ScalaZ 8 is still under development but promises significant performance improvements for their `IO` Monad. The benchmarks above will have to be reran when it is released.
+-   **Avoid Future from Vanilla Scala.** Other than being less safe and harder to reason about, its performance is the worst of the four by far.
+-   Except for a few outliers, performance of the two libraries is within the same ballpark.
+-   One should favour hand-written typeclass instances for Cats, while deriving seems reliable for ScalaZ.
+-   Neither library performs well on recursive Monadic operations (`State` especially). Haskell is two to three orders of magnitude faster in this regard. In particular, GHC heavily optimizes both `IO` and `State` operations.
+-   As of 2018 April, both ScalaZ and Cats have fastly improved the performance of their `IO` Monad. This bodes well for Scala-based webservers like [http4s](https://http4s.org/).
 
 # Usage Considerations<a id="sec-4"></a>
 
@@ -229,7 +254,7 @@ From its Scaladocs:
 
 The implication is that `Maybe` should be safer and slightly more performant than `Option`. Ironically, many ScalaZ methods that yield an "optional" value use `Option` and not `Maybe`.
 
-Where Monad Transformers and concerned, ScalaZ provides both `MaybeT` and `OptionT`.
+Where Monad Transformers are concerned, ScalaZ provides both `MaybeT` and `OptionT`.
 
 ### ScalaZ: `EphemeralStream`<a id="sec-4-2-3"></a>
 
@@ -250,6 +275,16 @@ How does it perform?
 | Tail Recursion | 45.9 | 24.1  |        |       | 69.8           |                 |          |
 
 We see similar slowdowns for chained higher-order ops as well. Looks like building in the laziness has its cost.
+
+### ScalaZ: Bifunctor `IO[E, A]`<a id="sec-4-2-4"></a>
+
+Thanks to the backport library [scalaz-ioeffect](https://github.com/scalaz/ioeffect), ScalaZ 7 `IO` is now a bifunctor: `IO[E, A]`. Any possible error is explicit in the type signature. Typically this will be:
+
+-   `Exception` or `Throwable` for Java-like exceptions
+-   `Void` for when an error is provably impossible
+-   Some custom error ADT unique to your application
+
+IO-as-a-bifunctor is a living experiment that offers semantics not yet available in Cats or even Haskell's `IO`. The closest approximation is a Cats/Haskell `EitherT[IO, E, A]`, which, having two modes of error reporting has been found over time to not be ideal. In the case of Scala, this `EitherT` wrapping incurs a 4x slowdown.
 
 ## Typeclasses<a id="sec-4-3"></a>
 
@@ -391,8 +426,8 @@ As of 2018 January 4, ScalaZ's last major release was in December 2015, and Cats
 
 | Project | Releases | Watchers | Stars | Forks | Commits | Prev. Month Commits | ScalaJS | Scala Native |
 |------- |-------- |-------- |----- |----- |------- |------------------- |------- |------------ |
-| ScalaZ  | 109      | 253      | 3519  | 536   | 6157    | 42                  | Yes     | Yes          |
-| Cats    | 25       | 185      | 2246  | 559   | 3378    | 57                  | Yes     | **No**       |
+| ScalaZ  | 106      | 257      | 3312  | 534   | 6101    | 45                  | Yes     | Yes          |
+| Cats    | 22       | 174      | 2118  | 493   | 3280    | 51                  | Yes     | **No**       |
 
 ScalaZ's numbers are higher, but that's to be expected as it's an older project. Otherwise the projects seem to be about equally active. Notably missing is the lack of Scala Native support in Cats.
 
@@ -408,7 +443,7 @@ That in mind, here is a simplified view of their library ecosystems:
 
 -   Origami is a port of Haskell's [foldl](https://hackage.haskell.org/package/foldl) library
 -   Atto is a port of Haskell's [attoparsec](https://hackage.haskell.org/package/attoparsec) library
--   Decline is a port of Haskell's [optparse-applicative](https://hackage.haskell.org/package/optparse-applicative) library
+-   Decline and optparse-applicative are ports of Haskell's [optparse-applicative](https://hackage.haskell.org/package/optparse-applicative) library
 -   Refined is a port of Haskell's [refined](https://hackage.haskell.org/package/refined) library
 -   Monocle is a port of Haskell's [lens](https://hackage.haskell.org/package/lens) library
 

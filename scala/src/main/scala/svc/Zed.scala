@@ -2,12 +2,12 @@ package svc
 
 import scalaz._
 import Scalaz._  /* This is easiest. Fighting with the "a la carte" import style is much harder */
-import scalaz.effect._  /* Requires a separate dep, scalaz-effect */
+import scalaz.ioeffect._  /* Requires a separate dep, scalaz-effect */
 import scalaz.Free.Trampoline
 
 // --- //
 
-object Zed {
+object Zed extends RTS {
 
   /* --- SHOW --- */
 
@@ -58,17 +58,15 @@ object Zed {
 
   /* --- EQUAL --- */
 
-  @deriving(Equal)
+  // @deriving(Equal)
   case class Foo(age: Int, msg: String, truthy: Boolean)
 
-  /*
   object Foo {
     implicit val eqFoo: Equal[Foo] = new Equal[Foo] {
       def equal(foo0: Foo, foo1: Foo): Boolean =
         foo0.eq(foo1) || (foo0.age === foo1.age && foo0.msg === foo1.msg && foo0.truthy === foo1.truthy)
     }
   }
-  */
 
   /** Scala has "universal equality". We can compare any two objects as equal, even
     * if it doesn't make sense to. Even if that type has no notion of equality (like `Function`).
@@ -188,20 +186,20 @@ object Zed {
   /** Same usage as Cats, except that to run the IO we use the Haskell-inspired
     * method `.unsafePerformIO`
     */
-  def greet(name: String): IO[Unit] = IO { println(s"Hi, ${name}!") }
+  def greet(name: String): IO[Exception, Unit] = IO.syncException { println(s"Hi, ${name}!") }
 
   /** This doesn't appear to blow the stack, even without manual trampolining.
     * Unlike Cats, there is a bit of a slowdown if you use `(>>=)` instead of
     * `flatMap`, but luckily performance is linear with input size, like Cats.
     */
-  def recurseIO(n: Int): IO[Int] = n match {
-    case 0 => IO(0)
-    case n => IO(n - 1).flatMap(recurseIO)
+  def recurseIO(n: Int): IO[Void, Int] = n match {
+    case 0 => IO.now(0)
+    case n => IO.now(n - 1).flatMap(recurseIO)
   }
 
   /** The `IO` type is aware of exceptions and can help you handle them. */
-  def ioException: IO[Unit] =
-    IO(println("Step 1")) >> IO { throw new Exception } >> IO(println("Step 2"))
+  def ioException: IO[Exception, Unit] =
+    IO.syncException(println("Step 1")) *> IO.fail(new Exception) *> IO.syncException(println("Step 2"))
 
   /** Various ways of handling Exceptions through IO. Since Exceptions are side-effects
     * and side-effects should only occur in IO, this is a good way to communicate
@@ -211,14 +209,25 @@ object Zed {
     */
   def catchingExceptions: Unit = {
     /* Prints "Step 1" then explodes */
-    ioException.unsafePerformIO
+    unsafePerformIO(ioException)
 
     /* Prints "Step 1", then "crap", then explodes */
-    ioException.onException(IO(println("crap"))).unsafePerformIO
-    ioException.ensuring(IO(println("crap"))).unsafePerformIO
+    unsafePerformIO(ioException.ensuring(IO.sync(println("crap"))))
 
     /* Prints "Step 1", then "crap", then returns safely */
-    ioException.except(_ => IO(println("crap"))).unsafePerformIO
+    unsafePerformIO(ioException.catchAll(_ => IO.syncException(println("crap"))))
+  }
+
+  class Horrible
+
+  def ioCountdown(n: Int): IO[Horrible, Int] = n match {
+    case 0 => IO.fail(new Horrible)
+    case n => IO.now(n - 1).flatMap(ioCountdown)
+  }
+
+  def ioCountdownE(n: Int): IO[Exception, Int] = n match {
+    case 0 => IO.fail(new Exception)
+    case n => IO.now(n - 1).flatMap(ioCountdownE)
   }
 
   /* --- ASYNC IO --- */

@@ -2,28 +2,34 @@ name := """scalaz-vs-cats"""
 
 version := "1.0.0"
 
-scalaVersion in ThisBuild := "2.12.4"
+scalaVersion in ThisBuild := "2.12.5"
 
 /* Settings common to each sub project */
 val common = Seq(
   scalacOptions ++= Seq(
     "-deprecation",
     "-language:higherKinds",
-    "-Ypartial-unification"
+    "-Ypartial-unification",
+    "-Ywarn-value-discard",
+    "-Ywarn-unused-import",
+    "-Ywarn-dead-code",
+    "-Ywarn-numeric-widen",
+    "-Ybackend-parallelism", "4"
   ),
 
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.0"),
 
   libraryDependencies ++= Seq(
-    "com.fommil"    %% "deriving-macro"  % "0.9.1-SNAPSHOT",
-    "com.fommil"    %% "scalaz-deriving" % "0.9.1-SNAPSHOT",
-    "org.typelevel" %% "cats-core"       % "1.0.0",
-    "org.typelevel" %% "cats-effect"     % "0.7",
-    "org.typelevel" %% "kittens"         % "1.0.0-RC1",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.18",
-    "org.scalaz"    %% "scalaz-effect"   % "7.2.18"
+    "com.fommil"    %% "deriving-macro"  % "0.13.0",
+    "com.fommil"    %% "scalaz-deriving" % "0.13.0",
+    "org.typelevel" %% "cats-core"       % "1.1.0",
+    "org.typelevel" %% "cats-effect"     % "0.10",
+    "org.typelevel" %% "kittens"         % "1.0.0-RC3",
+    "org.scalaz"    %% "scalaz-core"     % "7.2.21",
+    "org.scalaz"    %% "scalaz-ioeffect" % "1.0.1-SNAPSHOT"
   )
 )
 
