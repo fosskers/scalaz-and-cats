@@ -10,10 +10,11 @@
     - [I care about licensing](#sec-2-6)
     - [I care about which stays truer to Haskell](#sec-2-7)
     - [I care about which has more industry backing](#sec-2-8)
-    - [I hear the `IO` Monad can help me logically organize my code](#sec-2-9)
-    - [Futures suck and I hate JVM thread pools. Help?](#sec-2-10)
-    - [Just gimme Monads](#sec-2-11)
-    - [I'm interested in other FP options on the JVM](#sec-2-12)
+    - [I chain operations with `for` / `yield`, isn't that all I need?](#sec-2-9)
+    - [I hear the `IO` Monad can help me logically organize my code](#sec-2-10)
+    - [Futures suck and I hate JVM thread pools. Help?](#sec-2-11)
+    - [Just gimme Monads](#sec-2-12)
+    - [I'm interested in other FP options on the JVM](#sec-2-13)
   - [Benchmarks](#sec-3)
     - [Results](#sec-3-1)
     - [Observations](#sec-3-2)
@@ -97,13 +98,19 @@ ScalaZ does. Its core has a larger API, provides more features up-front, and ten
 
 [According to this survey](https://www.jetbrains.com/research/devecosystem-2017/scala/), ScalaZ does.
 
-## I hear the `IO` Monad can help me logically organize my code<a id="sec-2-9"></a>
+## I chain operations with `for` / `yield`, isn't that all I need?<a id="sec-2-9"></a>
+
+Vanilla `for` [has funny GOTCHAs](https://github.com/lampepfl/dotty/issues/2573) that can affect both performance and usability.
+
+Luckily, the [better-monadic-for](https://github.com/oleg-py/better-monadic-for) plugin can help. It desugars `for` blocks into saner use of `.flatMap` and `.map` to avoid redundant calls, type casts, and object allocations.
+
+## I hear the `IO` Monad can help me logically organize my code<a id="sec-2-10"></a>
 
 Both ScalaZ 7 and Cats have a `effects` subpackage which provides an `IO` type. They both help you contain "real world" side-effects into smaller areas of your code base, freeing the rest of it to purity ([referential transparency](https://en.wikipedia.org/wiki/Referential_transparency)). They also help you wrangle IO-based Exceptions.
 
 A recent (2018 April) development is that of [scalaz-ioeffect](https://github.com/scalaz/ioeffect), a backport of the `IO` Monad implementation from ScalaZ 8. This offers a 2 order-of-magnitude performance improvement over `scalaz-effect`, which puts it about 20% faster than `IO` from Cats, and around 50x faster than `Future` from vanilla Scala.
 
-## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-10"></a>
+## Futures suck and I hate JVM thread pools. Help?<a id="sec-2-11"></a>
 
 The `IO` Monad can help you, my friend. First, tell me why `Future` is in your life:
 
@@ -121,11 +128,11 @@ val fut: Future[Foo] = ...
 
 `fut` is *running*, and you need to keep track of that in your head. This is not the case for `IO`, which makes it much easier to reason about program behaviour in general.
 
-## Just gimme Monads<a id="sec-2-11"></a>
+## Just gimme Monads<a id="sec-2-12"></a>
 
 Then either is fine, you can flip a coin.
 
-## I'm interested in other FP options on the JVM<a id="sec-2-12"></a>
+## I'm interested in other FP options on the JVM<a id="sec-2-13"></a>
 
 If you're not already entrenched in Scala, then you're in luck. [Eta](http://eta-lang.org/) is a Haskell dialect that targets the JVM. It can access a large portion of the existing Haskell library ecosystem, and also has a [Java FFI](http://eta-lang.org/docs/html/eta-tutorials.html#interacting-with-java) that handles the possibility of `null` more explicitely than Scala.
 

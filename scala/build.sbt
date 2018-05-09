@@ -21,6 +21,7 @@ val common = Seq(
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
   addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.0"),
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
 
   libraryDependencies ++= Seq(
     "com.fommil"    %% "deriving-macro"  % "0.13.0",

@@ -76,6 +76,14 @@ and tends to keep Haskell function names and operators (e.g. ~<*>~).
 
 [[https://www.jetbrains.com/research/devecosystem-2017/scala/][According to this survey]], ScalaZ does.
 
+*** I chain operations with ~for~ / ~yield~, isn't that all I need?
+
+Vanilla ~for~ [[https://github.com/lampepfl/dotty/issues/2573][has funny GOTCHAs]] that can affect both performance and usability.
+
+Luckily, the [[https://github.com/oleg-py/better-monadic-for][better-monadic-for]] plugin can help. It desugars ~for~ blocks into
+saner use of ~.flatMap~ and ~.map~ to avoid redundant calls, type casts, and
+object allocations.
+
 *** I hear the ~IO~ Monad can help me logically organize my code
 
 Both ScalaZ 7 and Cats have a ~effects~ subpackage which provides an
