@@ -169,11 +169,12 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 
 *[Kittens](https://github.com/milessabin/kittens) and [scalaz-deriving](https://gitlab.com/fommil/scalaz-deriving/) were used to derive Eq instances.*
 
--   `scalaz-deriving v0.13.0`
--   `kittens 1.0.0-RC3`
--   `scalaz-ioeffect-1.0.1-SNAPSHOT` (ScalaZ 8 `IO` backport)
+-   `scalaz-deriving v0.13.1`
+-   `kittens 1.0.0`
+-   `scalaz-ioeffect-2.3.0` (ScalaZ 8 `IO` backport)
+-   `cats-effect-1.0.0-RC2`
 
-| Benchmark                                   | ScalaZ 7.2.21 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
+| Benchmark                                   | ScalaZ 7.2.24 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
 |------------------------------------------- |------------- |---------- |------------- |------------- |
 | `Eq` - same `[Int]`                         | 10.4\*        | 2.5        | 2.4           | 3,974         |
 | `Eq` - different `[Int]`                    | 5,792         | 3,983      | 5,180         |               |
@@ -195,15 +196,15 @@ Benchmarks were performed using the [JMH plugin for SBT](https://github.com/ktos
 | `StateT` - countdown                        | 4,387,924     | 9,744,808  |               | 15.4          |
 | `Applicative` - sum `(<*>)`                 | 31,429        | 32,132     |               | 22,140        |
 | `Applicative` - sum (cartesian)             | 54,774        | 33,638     |               |               |
-| `IO` - Deep `flatMap` - 1000                | 9,757         | 12,373     | 473,972\*     | 616.8         |
-| `IO` - Deep `flatMap` - 10000               | 88,675        | 129,382    | 4,659,933     | 6,021         |
-| `IO` - Deep `flatMap` - 100000              | 896,186       | 1,260,103  | 47,428,441    | 59,670        |
-| `IO` - Deep `flatMap` w/ error ADT - 1k     | 11,383        | 46,958\*   |               | 626           |
-| `IO` - Deep `flatMap` w/ error ADT - 10k    | 95,951        | 469,918    |               | 6,058         |
-| `IO` - Deep `flatMap` w/ error ADT - 100k   | 963,542       | 4,738,863  |               | 60,270        |
-| `IO` - Deep `flatMap` w/ `Exception` - 1k   | 13,292        | 13,047     | 533,099       | 1,147         |
-| `IO` - Deep `flatMap` w/ `Exception` - 10k  | 103,312       | 100,120    | 4,723,224     | 11,050        |
-| `IO` - Deep `flatMap` w/ `Exception` - 100k | 970,776       | 992,538    | 48,350,346    | 109,600       |
+| `IO` - Deep `flatMap` - 1000                | 8,869         | 14,559     | 506,433\*     | 616.8         |
+| `IO` - Deep `flatMap` - 10000               | 88,675        | 147,758    | 4,859,057     | 6,021         |
+| `IO` - Deep `flatMap` - 100000              | 896,186       | 1,305,728  | 46,518,625    | 59,670        |
+| `IO` - Deep `flatMap` w/ error ADT - 1k     | 10,843        | 49,625\*   |               | 626           |
+| `IO` - Deep `flatMap` w/ error ADT - 10k    | 97,106        | 487,752    |               | 6,058         |
+| `IO` - Deep `flatMap` w/ error ADT - 100k   | 1,100,008     | 4,770,665  |               | 60,270        |
+| `IO` - Deep `flatMap` w/ `Exception` - 1k   | 12,747        | 12,887     | 479,240       | 1,147         |
+| `IO` - Deep `flatMap` w/ `Exception` - 10k  | 103,312       | 102,690    | 4,965,881     | 11,050        |
+| `IO` - Deep `flatMap` w/ `Exception` - 100k | 1,079,179     | 1,004,176  | 45,739,491    | 109,600       |
 
 *Notes:*
 

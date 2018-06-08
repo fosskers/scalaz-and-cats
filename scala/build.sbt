@@ -2,7 +2,7 @@ name := """scalaz-vs-cats"""
 
 version := "1.0.0"
 
-scalaVersion in ThisBuild := "2.12.5"
+scalaVersion in ThisBuild := "2.12.6"
 
 /* Settings common to each sub project */
 val common = Seq(
@@ -20,17 +20,17 @@ val common = Seq(
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.0"),
+  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.1"),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
 
   libraryDependencies ++= Seq(
-    "com.fommil"    %% "deriving-macro"  % "0.13.0",
-    "com.fommil"    %% "scalaz-deriving" % "0.13.0",
+    "com.fommil"    %% "deriving-macro"  % "0.13.1",
+    "com.fommil"    %% "scalaz-deriving" % "0.13.1",
     "org.typelevel" %% "cats-core"       % "1.1.0",
-    "org.typelevel" %% "cats-effect"     % "0.10",
-    "org.typelevel" %% "kittens"         % "1.0.0-RC3",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.21",
-    "org.scalaz"    %% "scalaz-ioeffect" % "1.0.1-SNAPSHOT"
+    "org.typelevel" %% "cats-effect"     % "1.0.0-RC2",
+    "org.typelevel" %% "kittens"         % "1.0.0",
+    "org.scalaz"    %% "scalaz-core"     % "7.2.24",
+    "org.scalaz"    %% "scalaz-ioeffect" % "2.3.0"
   )
 )
 
