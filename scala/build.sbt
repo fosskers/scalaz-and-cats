@@ -45,9 +45,9 @@ lazy val lib = project.in(file(".")).settings(common)
  */
 lazy val bench = project.in(file("bench")).settings(common).dependsOn(lib).enablePlugins(JmhPlugin).settings(
   // bench/jmh:run -i 15 -wi 15 -f1 -t10 .*EqualBench.equalDiffScalaz*
-  javaOptions in (Jmh, run) ++= scala.util.Properties.envOrNone("YOURKIT_AGENT").map { name =>
-    val agent = file(name)
-    require(agent.exists(), s"Yourkit agent specified ($agent) does not exist")
-    Seq(s"-agentpath:${agent.getCanonicalPath}=quiet")
-  }.getOrElse(Nil)
+  // javaOptions in (Jmh, run) ++= scala.util.Properties.envOrNone("YOURKIT_AGENT").map { name =>
+  //   val agent = file(name)
+  //   require(agent.exists(), s"Yourkit agent specified ($agent) does not exist")
+  //   Seq(s"-agentpath:${agent.getCanonicalPath}=quiet")
+  // }.getOrElse(Nil)
 )
