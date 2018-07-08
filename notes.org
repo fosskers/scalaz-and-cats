@@ -178,10 +178,12 @@ Vanilla Scala and Haskell results are also included where applicable.
 
 /[[https://github.com/milessabin/kittens][Kittens]] and [[https://gitlab.com/fommil/scalaz-deriving/][scalaz-deriving]] were used to derive Eq instances./
 
-- ~scalaz-deriving v0.13.1~
-- ~kittens 1.0.0~
-- ~scalaz-ioeffect-2.3.0~ (ScalaZ 8 ~IO~ backport)
-- ~cats-effect-1.0.0-RC2~
+| Side Library      | Version   |
+|-------------------+-----------|
+| ~scalaz-deriving~ | 1.0.0-RC1 |
+| ~kittens~         | 1.1.0     |
+| ~scalaz-ioeffect~ | 2.10.1    |
+| ~cats-effect~     | 1.0.0-RC2 |
 
 | Benchmark                                   | ScalaZ 7.2.24 | Cats 1.1.0 | Vanilla Scala | Haskell 8.2.2 |
 |---------------------------------------------+---------------+------------+---------------+---------------|
@@ -190,7 +192,7 @@ Vanilla Scala and Haskell results are also included where applicable.
 | ~Eq~ - ~while~ w/ ~Int~                     | 3,188         | 199        | 198           |               |
 | ~Eq~ (derived) - same ~[Foo]~               | 10.2          | 2.7        | 2.5           |               |
 | ~Eq~ (derived) - different ~[Foo]~          | 2,941         | 45,416     | 2,071         |               |
-| ~Eq~ (derived) - ~while~ w/ ~Foo~           | 463,595       | 45,652     | 5,335         |               |
+| ~Eq~ (derived) - ~while~ w/ ~Foo~           | 386,948       | 45,652     | 5,335         |               |
 | ~Eq~ (hand-written) - same ~[Foo]~          | 10.1          | 2.8        | 2.5           |               |
 | ~Eq~ (hand-written) - different ~[Foo]~     | 2,962         | 7,835      | 2,071         |               |
 | ~Eq~ (hand-written) - ~while~ w/ ~Foo~      | 8,980         | 5,341      | 5,335         |               |
