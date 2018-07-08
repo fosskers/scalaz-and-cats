@@ -4,6 +4,8 @@ version := "1.0.0"
 
 scalaVersion in ThisBuild := "2.12.6"
 
+val derivingVersion = "1.0.0-RC1"
+
 /* Settings common to each sub project */
 val common = Seq(
   scalacOptions ++= Seq(
@@ -20,17 +22,17 @@ val common = Seq(
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-  addCompilerPlugin("com.fommil" %% "deriving-plugin" % "0.13.1"),
+  addCompilerPlugin("com.fommil" %% "deriving-plugin" % derivingVersion),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
 
   libraryDependencies ++= Seq(
-    "com.fommil"    %% "deriving-macro"  % "0.13.1",
-    "com.fommil"    %% "scalaz-deriving" % "0.13.1",
+    "com.fommil"    %% "deriving-macro"  % derivingVersion,
+    "com.fommil"    %% "scalaz-deriving" % derivingVersion,
     "org.typelevel" %% "cats-core"       % "1.1.0",
     "org.typelevel" %% "cats-effect"     % "1.0.0-RC2",
     "org.typelevel" %% "kittens"         % "1.0.0",
-    "org.scalaz"    %% "scalaz-core"     % "7.2.24",
-    "org.scalaz"    %% "scalaz-ioeffect" % "2.3.0"
+    "org.scalaz"    %% "scalaz-core"     % "7.2.25",
+    "org.scalaz"    %% "scalaz-ioeffect" % "2.10.1"
   )
 )
 
@@ -43,9 +45,9 @@ lazy val lib = project.in(file(".")).settings(common)
  */
 lazy val bench = project.in(file("bench")).settings(common).dependsOn(lib).enablePlugins(JmhPlugin).settings(
   // bench/jmh:run -i 15 -wi 15 -f1 -t10 .*EqualBench.equalDiffScalaz*
-  javaOptions in (Jmh, run) ++= scala.util.Properties.envOrNone("YOURKIT_AGENT").map { name =>
-    val agent = file(name)
-    require(agent.exists(), s"Yourkit agent specified ($agent) does not exist")
-    Seq(s"-agentpath:${agent.getCanonicalPath}=quiet")
-  }.getOrElse(Nil)
+  // javaOptions in (Jmh, run) ++= scala.util.Properties.envOrNone("YOURKIT_AGENT").map { name =>
+  //   val agent = file(name)
+  //   require(agent.exists(), s"Yourkit agent specified ($agent) does not exist")
+  //   Seq(s"-agentpath:${agent.getCanonicalPath}=quiet")
+  // }.getOrElse(Nil)
 )
