@@ -23,10 +23,10 @@
 - [[#usage-considerations][Usage Considerations]]
   - [[#api-accessibility][API Accessibility]]
   - [[#features][Features]]
-    - [[#scalaz-ilist][ScalaZ: ~IList~]]
-    - [[#scalaz-maybe][ScalaZ: ~Maybe~]]
-    - [[#scalaz-ephemeralstream][ScalaZ: ~EphemeralStream~]]
-    - [[#scalaz-bifunctor-ioe-a][ScalaZ: Bifunctor ~IO[E, A]~]]
+    - [[#scalaz-ilist][ScalaZ: IList]]
+    - [[#scalaz-maybe][ScalaZ: Maybe]]
+    - [[#scalaz-ephemeralstream][ScalaZ: EphemeralStream]]
+    - [[#scalaz-bifunctor-io][ScalaZ: Bifunctor IO]]
   - [[#typeclasses][Typeclasses]]
     - [[#custom-typeclasses][Custom Typeclasses]]
     - [[#instance-derivation][Instance Derivation]]
@@ -313,7 +313,7 @@ is the same.
 
 ** Features
 
-*** ScalaZ: ~IList~
+*** ScalaZ: IList
 
 From its Scaladocs:
 
@@ -329,7 +329,7 @@ Specifically, it handles tail-recursive algorithms with pattern matching
 (thus mimicking ~.map~ and ~.foldLeft~) twice as fast as vanilla ~List~.
 Only an ~Array~ of ~Int~ or ~Double~ via a ~while~ loop can iterate faster.
 
-*** ScalaZ: ~Maybe~
+*** ScalaZ: Maybe
 
 From its Scaladocs:
 
@@ -346,7 +346,7 @@ Ironically, many ScalaZ methods that yield an "optional" value use ~Option~ and 
 
 Where Monad Transformers are concerned, ScalaZ provides both ~MaybeT~ and ~OptionT~.
 
-*** ScalaZ: ~EphemeralStream~
+*** ScalaZ: EphemeralStream
 
 From its Scaladocs:
 
@@ -373,7 +373,7 @@ How does it perform?
 We see similar slowdowns for chained higher-order ops as well. Looks like building in
 the laziness has its cost.
 
-*** ScalaZ: Bifunctor ~IO[E, A]~
+*** ScalaZ: Bifunctor IO
 
 Thanks to the backport library [[https://github.com/scalaz/ioeffect][scalaz-ioeffect]], ScalaZ 7 ~IO~ is now a bifunctor: ~IO[E, A]~.
 Any possible error is explicit in the type signature. Typically this will be:
